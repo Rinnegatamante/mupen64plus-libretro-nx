@@ -218,6 +218,22 @@ else ifeq ($(platform), libnx)
    GLES = 0
    WITH_DYNAREC = aarch64
    STATIC_LINKING = 1
+   
+# Vita
+else ifeq ($(platform), vita)
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
+   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard
+   PLATCFLAGS = -O3 -ffast-math -funsafe-math-optimizations -ffunction-sections -fno-optimize-sibling-calls
+   PLATCFLAGS += $(INCLUDE) -funroll-loops
+   CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive
+   COREFLAGS += -DOS_LINUX -DEGL
+   GLES = 1
+   WITH_DYNAREC = arm
+   STATIC_LINKING = 1
+   COREFLAGS += -ftree-vectorize -ftree-vectorizer-verbose=2 -funsafe-math-optimizations -fno-finite-math-only -fno-optimize-sibling-calls
+   CC = arm-vita-eabi-gcc$(EXE_EXT)
+   CXX = arm-vita-eabi-g++$(EXE_EXT)
+   AR = arm-vita-eabi-ar$(EXE_EXT)
 
 # Jetson Xavier NX
 else ifeq ($(platform), jetson-xavier)

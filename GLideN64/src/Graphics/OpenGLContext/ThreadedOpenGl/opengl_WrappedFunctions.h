@@ -30,7 +30,7 @@ extern "C" cothread_t retro_thread;
 #include <Graphics/OpenGLContext/windows/WindowsWGL.h>
 #endif
 
-#if defined(__LIBRETRO__) && !defined(NO_GL_WRAP)
+#if defined(__LIBRETRO__) && (!defined(NO_GL_WRAP) || defined(__vita__))
 #include <glsm/glsm_state_ctl.h>
 #endif
 
@@ -3678,7 +3678,9 @@ public:
 
 	void commandToExecute() override
 	{
+#ifndef __vita__
 		ptrTextureBarrier();
+#endif
 	}
 
 private:
@@ -3705,7 +3707,9 @@ public:
 
 	void commandToExecute() override
 	{
+#ifndef __vita__
 		ptrTextureBarrierNV();
+#endif
 	}
 
 private:

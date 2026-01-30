@@ -23,6 +23,9 @@
 #ifndef RGLGEN_PRIVATE_HEADERS_H__
 #define RGLGEN_PRIVATE_HEADERS_H__
 
+#ifdef __vita__
+#include <vitaGL.h>
+#else
 #if defined(IOS)
 
 #if defined(HAVE_OPENGLES3)
@@ -71,6 +74,7 @@
 #include "switch/nx_gl.h"
 #include <GL/glext.h>
 #endif /* SWITCH */
+#endif
 #endif
 
 #endif

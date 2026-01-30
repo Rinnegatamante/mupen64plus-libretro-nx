@@ -7,6 +7,11 @@
 using namespace graphics;
 using namespace opengl;
 
+#ifdef __vita__
+#define GL_MAP_PERSISTENT_BIT 0
+#define GL_MAP_COHERENT_BIT 0
+#endif
+
 const u32 BufferedDrawer::m_bufMaxSize = 8 * 1024 * 1024; // 8 MB
 #ifndef GL_DEBUG
 const GLbitfield BufferedDrawer::m_bufAccessBits = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
@@ -62,8 +67,10 @@ void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
 	glGenBuffers(1, &_buffer.handle);
 	m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
 	if (m_glInfo.bufferStorage) {
+#ifndef __vita__
 		glBufferStorage(_buffer.type, _bufSize, nullptr, m_bufAccessBits);
 		_buffer.data = (GLubyte*)glMapBufferRange(_buffer.type, 0, _bufSize, m_bufMapBits);
+#endif
 	} else {
 		glBufferData(_buffer.type, _bufSize, nullptr, GL_DYNAMIC_DRAW);
 	}
@@ -219,13 +226,17 @@ void BufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParamete
 	if (_params.elements == nullptr) {
 		const GLint vboStartPos = m_trisBuffers.vbo.pos - _params.verticesCount;
 		if (_params.mode != graphics::drawmode::TRIANGLES) {
+#ifndef __vita__
 			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 			glDrawArrays(GLenum(_params.mode), m_trisBuffers.vbo.pos - _params.verticesCount, _params.verticesCount);
 			return;
 		}
 
 		for (GLint i = 0; i < GLint(_params.verticesCount); i += 3) {
+#ifndef __vita__
 			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 			glDrawArrays(GLenum(_params.mode), vboStartPos + i, 3);
 		}
 		return;
@@ -234,7 +245,9 @@ void BufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParamete
 	const GLint eboStartPos = m_trisBuffers.ebo.pos - _params.elementsCount;
 	const GLint vboStartPos = m_trisBuffers.vbo.pos - _params.verticesCount;
 	for (GLint i = 0; i < GLint(_params.elementsCount); i += 3) {
+#ifndef __vita__
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 		glDrawRangeElementsBaseVertex(GLenum(_params.mode), i, i + 2, 3, GL_UNSIGNED_SHORT,
 			(u16*)nullptr + eboStartPos + i, vboStartPos);
 	}

@@ -15,6 +15,7 @@
 #undef GL_GLEXT_PROTOTYPES
 #endif // GL_GLEXT_PROTOTYPES
 
+#ifndef __vita__
 #ifdef EGL
 #include <GL/glcorearb.h>
 #include <EGL/egl.h>
@@ -39,15 +40,19 @@ typedef double GLdouble;
 #include <GL/gl.h>
 #include <GL/glcorearb.h>
 #endif
+#endif
 
+#ifndef __vita__
 #define GL_LUMINANCE 0x1909
 #include <GL/glext.h>
+#endif
 #include <stdexcept>
 #include <sstream>
 #include "Log.h"
 
 #define IS_GL_FUNCTION_VALID(proc_name) ptr##proc_name != nullptr
 
+#ifndef __vita__
 #if !defined(EGL) && !defined(OS_IOS)
 typedef void (APIENTRYP PFNGLPOLYGONOFFSETPROC) (GLfloat factor, GLfloat units);
 typedef void (APIENTRYP PFNGLBINDTEXTUREPROC) (GLenum target, GLuint texture);
@@ -211,6 +216,149 @@ extern PFNGLEGLIMAGETARGETTEXTURE2DOESPROC ptrEGLImageTargetTexture2DOES;
 
 typedef void (APIENTRYP PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC) (GLenum target, void* image);
 extern PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC ptrEGLImageTargetRenderbufferStorageOES;
+#else
+#define GLDEBUGPROC int
+#include <vitaGL.h>
+#define ptrBlendFunc glBlendFunc
+#define ptrBlendFuncSeparate glBlendFuncSeparate
+#define ptrPixelStorei glPixelStorei
+#define ptrClearColor glClearColor
+#define ptrCullFace glCullFace
+#define ptrDepthFunc glDepthFunc
+#define ptrDepthMask glDepthMask
+#define ptrDisable glDisable
+#define ptrEnable glEnable
+#define ptrPolygonOffset glPolygonOffset
+#define ptrScissor glScissor
+#define ptrViewport glViewport
+#define ptrBindTexture glBindTexture
+#define ptrTexImage2D glTexImage2D
+#define ptrTexParameteri glTexParameteri
+#define ptrGetIntegerv glGetIntegerv
+#define ptrGetString glGetString
+#define ptrReadPixels glReadPixels
+#define ptrTexSubImage2D glTexSubImage2D
+#define ptrDrawArrays glDrawArrays
+#define ptrGetError glGetError
+#define ptrDrawElements glDrawElements
+#define ptrLineWidth glLineWidth
+#define ptrClear glClear
+#define ptrGetFloatv glGetFloatv
+#define ptrDeleteTextures glDeleteTextures
+#define ptrGenTextures glGenTextures
+#define ptrTexParameterf glTexParameterf
+#define ptrActiveTexture glActiveTexture
+#define ptrBlendColor
+#define ptrReadBuffer
+#define ptrFinish glFinish
+#define ptrFlush glFlush
+#define ptrCreateShader glCreateShader
+#define ptrCompileShader glCompileShader
+#define ptrShaderSource glShaderSource
+#define ptrCreateProgram glCreateProgram
+#define ptrAttachShader glAttachShader
+#define ptrLinkProgram glLinkProgram
+#define ptrUseProgram glUseProgram
+#define ptrGetUniformLocation glGetUniformLocation
+#define ptrUniform1i glUniform1i
+#define ptrUniform1f glUniform1f
+#define ptrUniform2f glUniform2f
+#define ptrUniform2i glUniform2i
+#define ptrUniform4i glUniform4i
+#define ptrUniform4f glUniform4f
+#define ptrUniform3fv glUniform3fv
+#define ptrUniform4fv glUniform4fv
+#define ptrDetachShader
+#define ptrDeleteShader glDeleteShader
+#define ptrDeleteProgram glDeleteProgram
+#define ptrGetProgramInfoLog glGetProgramInfoLog
+#define ptrGetShaderInfoLog glGetShaderInfoLog
+#define ptrGetShaderiv glGetShaderiv
+#define ptrGetProgramiv glGetProgramiv
+
+#define ptrEnableVertexAttribArray glEnableVertexAttribArray
+#define ptrDisableVertexAttribArray glDisableVertexAttribArray
+#define ptrVertexAttribPointer glVertexAttribPointer
+#define ptrBindAttribLocation glBindAttribLocation
+#define ptrVertexAttrib1f glVertexAttrib1f
+#define ptrVertexAttrib4f glVertexAttrib4f
+#define ptrVertexAttrib4fv glVertexAttrib4fv
+
+#define ptrDepthRangef glDepthRangef
+#define ptrClearDepthf glClearDepthf
+
+#define ptrDrawBuffers
+#define ptrBindFramebuffer glBindFramebuffer
+#define ptrDeleteFramebuffers glDeleteFramebuffers
+#define ptrGenFramebuffers glGenFramebuffers
+#define ptrFramebufferTexture2D glFramebufferTexture2D
+#define ptrTexImage2DMultisample
+#define ptrTexStorage2DMultisample
+#define ptrGenRenderbuffers glGenRenderbuffers
+#define ptrBindRenderbuffer glBindRenderbuffer
+#define ptrRenderbufferStorage glRenderbufferStorage
+#define ptrFramebufferRenderbuffer glFramebufferRenderbuffer
+#define ptrDeleteRenderbuffers glDeleteRenderbuffers
+#define ptrCheckFramebufferStatus glCheckFramebufferStatus
+#define ptrBlitFramebuffer glBlitFramebuffer
+#define ptrGenVertexArrays glGenVertexArrays
+#define ptrBindVertexArray glBindVertexArray
+#define ptrDeleteVertexArrays glDeleteVertexArrays
+#define ptrGenBuffers glGenBuffers
+#define ptrBindBuffer glBindBuffer
+#define ptrBufferData glBufferData
+#define ptrMapBuffer glMapBuffer
+#define ptrMapBufferRange glMapBufferRange
+#define ptrUnmapBuffer glUnmapBuffer
+#define ptrDeleteBuffers glDeleteBuffers
+#define ptrBindImageTexture
+#define ptrMemoryBarrier
+#define ptrGetStringi glGetStringi
+#define ptrInvalidateFramebuffer
+#define ptrBufferStorage
+#define ptrFenceSync
+#define ptrClientWaitSync
+#define ptrDeleteSync
+
+#define ptrGetUniformBlockIndex glGetUniformBlockIndex
+#define ptrUniformBlockBinding glUniformBlockBinding
+#define ptrGetActiveUniformBlockiv
+#define ptrGetUniformIndices
+#define ptrGetActiveUniformsiv
+#define ptrBindBufferBase glBindBufferBase
+#define ptrBufferSubData glBufferSubData
+
+#define ptrGetProgramBinary glGetProgramBinary
+#define ptrProgramBinary glProgramBinary
+#define ptrProgramParameteri
+
+#define ptrTexStorage2D
+#define ptrTextureStorage2D
+#define ptrTextureSubImage2D
+#define ptrTextureStorage2DMultisample
+#define ptrTextureParameteri glTextureParameteri
+#define ptrTextureParameterf glTextureParameterf
+#define ptrCreateTextures glCreateTextures
+#define ptrCreateBuffers glCreateBuffers
+#define ptrCreateFramebuffers glCreateFramebuffers
+#define ptrNamedFramebufferTexture glNamedFramebufferTexture
+#define ptrDrawRangeElementsBaseVertex glDrawRangeElementsBaseVertex
+#define ptrFlushMappedBufferRange glFlushMappedBufferRange
+#define ptrTextureBarrier
+#define ptrTextureBarrierNV
+#define ptrClearBufferfv
+#define ptrEnablei
+#define ptrDisablei
+#define ptrDebugMessageCallback
+#define ptrDebugMessageControl
+#define ptrCopyTexImage2D glCopyTexImage2D
+#define ptrEGLImageTargetTexture2DOES
+#define ptrEGLImageTargetRenderbufferStorageOES
+
+#ifndef NO_GL_WRAP
+#define NO_GL_WRAP
+#endif
+#endif
 
 extern "C" void initGLFunctions();
 

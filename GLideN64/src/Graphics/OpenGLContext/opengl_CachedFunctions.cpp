@@ -26,9 +26,11 @@ void CachedEnable::enable(bool _enable)
 		// This is all to support macro shenanigans for the libretro glsm implementation
 		switch(GLenum(m_parameter)) {
 			case GL_BLEND:
+#ifndef __vita__
 				if(IS_GL_FUNCTION_VALID(Enablei))
 					glEnablei(GL_BLEND, 0);
 				else
+#endif
 					glEnable(GL_BLEND);
 				break;
 			case GL_CULL_FACE:
@@ -37,6 +39,7 @@ void CachedEnable::enable(bool _enable)
 			case GL_DEPTH_TEST:
 				glEnable(GL_DEPTH_TEST);
 				break;
+#ifndef __vita__
 			case GL_DEPTH_CLAMP:
 				glEnable(GL_DEPTH_CLAMP);
 				break;
@@ -46,6 +49,7 @@ void CachedEnable::enable(bool _enable)
 			case GL_DITHER:
 				glEnable(GL_DITHER);
 				break;
+#endif
 			case GL_POLYGON_OFFSET_FILL:
 				glEnable(GL_POLYGON_OFFSET_FILL);
 				break;
@@ -56,9 +60,11 @@ void CachedEnable::enable(bool _enable)
 	} else {
 		switch(GLenum(m_parameter)) {
 			case GL_BLEND:
+#ifndef __vita__
 				if(IS_GL_FUNCTION_VALID(Disablei))
 					glDisablei(GL_BLEND, 0);
 				else
+#endif
 					glDisable(GL_BLEND);
 				break;
 			case GL_CULL_FACE:
@@ -67,6 +73,7 @@ void CachedEnable::enable(bool _enable)
 			case GL_DEPTH_TEST:
 				glDisable(GL_DEPTH_TEST);
 				break;
+#ifndef __vita__
 			case GL_DEPTH_CLAMP:
 				glDisable(GL_DEPTH_CLAMP);
 				break;
@@ -76,6 +83,7 @@ void CachedEnable::enable(bool _enable)
 			case GL_DITHER:
 				glDisable(GL_DITHER);
 				break;
+#endif
 			case GL_POLYGON_OFFSET_FILL:
 				glDisable(GL_POLYGON_OFFSET_FILL);
 				break;
@@ -183,8 +191,10 @@ void CachedBlendingSeparate::setBlendingSeparate(Parameter _sfactorcolor, Parame
 
 void CachedBlendColor::setBlendColor(f32 _red, f32 _green, f32 _blue, f32 _alpha)
 {
+#ifndef __vita__
 	if (update(Parameter(_red), Parameter(_green), Parameter(_blue), Parameter(_alpha)))
 		glBlendColor(_red, _green, _blue, _alpha);
+#endif
 }
 
 /*---------------CachedClearColor-------------*/
@@ -234,10 +244,12 @@ void CachedTextureUnpackAlignment::setTextureUnpackAlignment(s32 _param)
 
 CachedFunctions::CachedFunctions(const GLInfo & _glinfo)
 {
+#ifndef __vita__
 	if (_glinfo.isGLESX) {
 		// Disable parameters, not avalible for GLESX
 		m_enables.emplace(GL_DEPTH_CLAMP, Parameter());
 	}
+#endif
 }
 
 CachedFunctions::~CachedFunctions()

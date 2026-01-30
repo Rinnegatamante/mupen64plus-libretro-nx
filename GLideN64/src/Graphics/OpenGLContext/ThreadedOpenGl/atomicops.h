@@ -351,7 +351,7 @@ extern "C" {
 #include <mach/mach.h>
 #elif defined(__HAIKU__)
 #include <posix/semaphore.h>
-#elif defined(__unix__) || defined(HAVE_LIBNX)
+#elif defined(__unix__) || defined(HAVE_LIBNX) || defined(__vita__)
 #include <semaphore.h>
 #endif
 
@@ -485,7 +485,7 @@ namespace moodycamel
 				}
 			}
 		};
-#elif defined(__unix__) || defined(HAVE_LIBNX) || defined(__HAIKU__)
+#elif defined(__unix__) || defined(HAVE_LIBNX) || defined(__HAIKU__) || defined(__vita__)
 		//---------------------------------------------------------
 		// Semaphore (POSIX, Linux)
 		//---------------------------------------------------------

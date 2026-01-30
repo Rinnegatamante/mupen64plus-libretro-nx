@@ -134,9 +134,11 @@ public:
 		, m_size(_size)
 	{
 		glGenBuffers(1, &m_PBO);
+#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
 		glBufferData(GL_PIXEL_PACK_BUFFER, m_size, nullptr, GL_DYNAMIC_READ);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
+#endif
 	}
 
 	~PBOReadBuffer() {
@@ -153,20 +155,30 @@ public:
 	{
 		if (_range > m_size)
 			_range = static_cast<u32>(m_size);
+#ifndef __vita__
 		return glMapBufferRange(GL_PIXEL_PACK_BUFFER, _offset, _range, GL_MAP_READ_BIT);
+#else
+		return nullptr;
+#endif
 	}
 
 	void closeReadBuffer() override
 	{
+#ifndef __vita__
 		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+#endif
 	}
 
 	void bind() override {
+#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
+#endif
 	}
 
 	void unbind() override {
+#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
+#endif
 	}
 
 private:
@@ -298,10 +310,12 @@ struct FramebufferTextureFormatsGLES3 : public graphics::FramebufferTextureForma
 	FramebufferTextureFormatsGLES3(const GLInfo & _glinfo)
 	{
 		if (_glinfo.renderer == Renderer::Adreno530) {
+#ifndef __vita__
 			colorInternalFormat = GL_RGBA32F;
 			colorFormat = GL_RGBA;
 			colorType = GL_FLOAT;
 			colorFormatBytes = 16;
+#endif
 		} else {
 			colorInternalFormat = GL_RGBA8;
 			colorFormat = GL_RGBA;
@@ -329,13 +343,17 @@ struct FramebufferTextureFormatsGLES3 : public graphics::FramebufferTextureForma
 		depthType = GL_UNSIGNED_INT;
 		depthFormatBytes = 4;
 
+#ifndef __vita__
 		depthImageInternalFormat = GL_R32F;
+#endif
 		depthImageFormat = GL_RED;
 		depthImageType = GL_FLOAT;
 		depthImageFormatBytes = 4;
 
+#ifndef __vita__
 		lutInternalFormat = GL_R32UI;
 		lutFormat = GL_RED_INTEGER;
+#endif
 		lutType = GL_UNSIGNED_INT;
 		lutFormatBytes = 4;
 
@@ -369,13 +387,17 @@ struct FramebufferTextureFormatsOpenGL : public graphics::FramebufferTextureForm
 		depthType = GL_FLOAT;
 		depthFormatBytes = 4;
 
+#ifndef __vita__
 		depthImageInternalFormat = GL_R32F;
+#endif
 		depthImageFormat = GL_RED;
 		depthImageType = GL_FLOAT;
 		depthImageFormatBytes = 4;
 
+#ifndef __vita__
 		lutInternalFormat = GL_R32UI;
 		lutFormat = GL_RED_INTEGER;
+#endif
 		lutType = GL_UNSIGNED_INT;
 		lutFormatBytes = 4;
 
