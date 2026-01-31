@@ -27,6 +27,7 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 	glGenBuffers(m_numPBO, m_PBO);
 	m_curIndex = 0;
 
+#ifndef __vita__
 	// Initialize Pixel Buffer Objects
 	for (u32 index = 0; index < m_numPBO; ++index) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[index]));
@@ -35,6 +36,7 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 	}
 
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
+#endif
 }
 
 void ColorBufferReaderWithBufferStorage::_destroyBuffers()
@@ -51,9 +53,9 @@ const u8 * ColorBufferReaderWithBufferStorage::_readPixels(const ReadColorBuffer
 {
 	GLenum format = GLenum(_params.colorFormat);
 	GLenum type = GLenum(_params.colorType);
-
+#ifndef __vita__
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
-
+#endif
 	glReadPixels(_params.x0, _params.y0, m_pTexture->width, _params.height, format, type, nullptr);
 
 	if (!_params.sync) {
@@ -70,5 +72,7 @@ const u8 * ColorBufferReaderWithBufferStorage::_readPixels(const ReadColorBuffer
 
 void ColorBufferReaderWithBufferStorage::cleanUp()
 {
+#ifndef __vita__
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
+#endif
 }

@@ -186,7 +186,7 @@ void ContextImpl::clearColorBuffer(f32 _red, f32 _green, f32 _blue, f32 _alpha)
 		m_cachedFunctions->getCachedClearColor()->setClearColor(_red, _green, _blue, _alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 	} else {
-#if defined(OS_ANDROID)
+#if defined(OS_ANDROID) || defined(__vita__)
 		// Using the GLES3 paths causes some background garbage where the Overscan is
 		// TODO: Investigate this
 		m_cachedFunctions->getCachedClearColor()->setClearColor(_red, _green, _blue, _alpha);
@@ -285,7 +285,9 @@ f32 ContextImpl::getMaxAnisotropy() const
 
 void ContextImpl::bindImageTexture(const graphics::Context::BindImageTextureParameters & _params)
 {
+#ifndef __vita__
 	glBindImageTexture(GLuint(_params.imageUnit), GLuint(_params.texture), 0, GL_FALSE, 0, GLenum(_params.accessMode), GLenum(_params.textureFormat));
+#endif
 }
 
 u32 ContextImpl::convertInternalTextureFormat(u32 _format) const
@@ -297,8 +299,10 @@ u32 ContextImpl::convertInternalTextureFormat(u32 _format) const
 	case GL_RGB8:
 		return GL_RGB;
 	case GL_RGBA8:
+#ifndef __vita__
 	case GL_RGBA4:
 	case GL_RGB5_A1:
+#endif
 		return GL_RGBA;
 	}
 
@@ -307,10 +311,12 @@ u32 ContextImpl::convertInternalTextureFormat(u32 _format) const
 
 void ContextImpl::textureBarrier()
 {
+#ifndef __vita__
 	if (m_glInfo.texture_barrier)
 		glTextureBarrier();
 	else if (m_glInfo.texture_barrierNV)
 		glTextureBarrierNV();
+#endif
 }
 
 /*---------------Framebuffer-------------*/
@@ -366,8 +372,10 @@ bool ContextImpl::blitFramebuffers(const graphics::Context::BlitFramebuffersPara
 
 void ContextImpl::setDrawBuffers(u32 _num)
 {
+#ifndef __vita__
 	GLenum targets[5] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4};
 	glDrawBuffers(_num, targets);
+#endif
 }
 
 graphics::PixelReadBuffer * ContextImpl::createPixelReadBuffer(size_t _sizeInBytes)
@@ -509,9 +517,13 @@ void ContextImpl::drawLine(f32 _width, SPVertex * _vertices)
 
 f32 ContextImpl::getMaxLineWidth()
 {
+#ifdef __vita__
+	return 1.0f;
+#else
 	GLfloat lineWidthRange[2] = { 0.0f, 0.0f };
 	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
 	return lineWidthRange[1];
+#endif
 }
 
 bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
@@ -549,11 +561,15 @@ bool ContextImpl::isSupported(graphics::SpecialFeatures _feature) const
 
 s32 ContextImpl::getMaxMSAALevel()
 {
+#ifdef __vita__
+	return 0;
+#else
 	GLint maxMSAALevel = 0;
 	glGetIntegerv(GL_MAX_SAMPLES, &maxMSAALevel);
 	// Limit maxMSAALevel by 16.
 	// Graphics driver may return 32 for max samples, but pixel format with 32 samples is not supported.
 	return std::min(maxMSAALevel, 16);
+#endif
 }
 
 bool ContextImpl::isError() const

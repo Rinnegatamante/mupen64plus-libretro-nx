@@ -105,20 +105,26 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 
 	if (_params.elements == nullptr) {
 		if (_params.mode != graphics::drawmode::TRIANGLES) {
+#ifndef __vita__
 			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 			glDrawArrays(GLenum(_params.mode), 0, _params.verticesCount);
 			return;
 		}
 
 		for (GLint i = 0; i < GLint(_params.verticesCount); i += 3) {
+#ifndef __vita__
 			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 			glDrawArrays(GLenum(_params.mode), i, 3);
 		}
 		return;
 	}
 
 	for (GLint i = 0; i < GLint(_params.elementsCount); i += 3) {
+#ifndef __vita__
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+#endif
 		glDrawElements(GLenum(_params.mode), 3, GL_UNSIGNED_BYTE, (u8*)_params.elements + i);
 	}
 }

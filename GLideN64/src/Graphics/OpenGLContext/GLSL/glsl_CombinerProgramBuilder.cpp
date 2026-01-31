@@ -506,10 +506,12 @@ graphics::CombinerProgram * CombinerProgramBuilder::buildCombinerProgram(Combine
 	else
 		glAttachShader(program, bUseTextures ? _getVertexShaderTexturedTriangle() : _getVertexShaderTriangle());
 	glAttachShader(program, fragmentShader);
+#ifndef __vita__
 	if (CombinerInfo::get().isShaderCacheSupported()) {
 		if (IS_GL_FUNCTION_VALID(ProgramParameteri))
 			glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	}
+#endif
 	glLinkProgram(program);
 	assert(Utils::checkProgramLinkStatus(program));
 	glDeleteShader(fragmentShader);

@@ -16,12 +16,16 @@ namespace graphics {
 		InternalColorFormatParam NOCOLOR(0U);
 		InternalColorFormatParam RGB8(GL_RGB8);
 		InternalColorFormatParam RGBA8(GL_RGBA8);
+#ifndef __vita__
 		InternalColorFormatParam RGBA4(GL_RGBA4);
 		InternalColorFormatParam RGB5_A1(GL_RGB5_A1);
 		InternalColorFormatParam RG(GL_RG8);
 		InternalColorFormatParam R16F(GL_R16F);
+#endif
 		InternalColorFormatParam DEPTH(GL_DEPTH_COMPONENT24);
+#ifndef __vita__
 		InternalColorFormatParam RG32F(GL_RG32F);
+#endif
 		InternalColorFormatParam LUMINANCE(0x1909);
 		InternalColorFormatParam COLOR_INDEX8(0x80E5);
 	}
@@ -38,7 +42,9 @@ namespace graphics {
 
 	namespace textureTarget {
 		TextureTargetParam TEXTURE_2D(GL_TEXTURE_2D);
+#ifndef __vita__
 		TextureTargetParam TEXTURE_2D_MULTISAMPLE(GL_TEXTURE_2D_MULTISAMPLE);
+#endif
 		TextureTargetParam RENDERBUFFER(GL_RENDERBUFFER);
 		TextureTargetParam TEXTURE_EXTERNAL(GL_TEXTURE_EXTERNAL_OES);
 	}
@@ -51,10 +57,12 @@ namespace graphics {
 
 	namespace bufferAttachment {
 		BufferAttachmentParam COLOR_ATTACHMENT0(GL_COLOR_ATTACHMENT0);
+#ifndef __vita__
 		BufferAttachmentParam COLOR_ATTACHMENT1(GL_COLOR_ATTACHMENT1);
 		BufferAttachmentParam COLOR_ATTACHMENT2(GL_COLOR_ATTACHMENT2);
 		BufferAttachmentParam COLOR_ATTACHMENT3(GL_COLOR_ATTACHMENT3);
 		BufferAttachmentParam COLOR_ATTACHMENT4(GL_COLOR_ATTACHMENT4);
+#endif
 		BufferAttachmentParam DEPTH_ATTACHMENT(GL_DEPTH_ATTACHMENT);
 	}
 
@@ -62,9 +70,11 @@ namespace graphics {
 		EnableParam BLEND(GL_BLEND);
 		EnableParam CULL_FACE(GL_CULL_FACE);
 		EnableParam DEPTH_TEST(GL_DEPTH_TEST);
+#ifndef __vita__
 		EnableParam DEPTH_CLAMP(GL_DEPTH_CLAMP);
 		EnableParam CLIP_DISTANCE0(GL_CLIP_DISTANCE0);
 		EnableParam DITHER(GL_DITHER);
+#endif
 		EnableParam POLYGON_OFFSET_FILL(GL_POLYGON_OFFSET_FILL);
 		EnableParam SCISSOR_TEST(GL_SCISSOR_TEST);
 	}
@@ -118,12 +128,14 @@ namespace graphics {
 		BlendParam SRC_ALPHA(GL_SRC_ALPHA);
 		BlendParam DST_ALPHA(GL_DST_ALPHA);
 		BlendParam ONE_MINUS_SRC_ALPHA(GL_ONE_MINUS_SRC_ALPHA);
+#ifndef __vita__
 		BlendParam CONSTANT_ALPHA(GL_CONSTANT_ALPHA);
 		BlendParam ONE_MINUS_CONSTANT_ALPHA(GL_ONE_MINUS_CONSTANT_ALPHA);
 		BlendParam SRC1_COLOR(GL_SRC1_COLOR);
 		BlendParam ONE_MINUS_SRC1_COLOR(GL_ONE_MINUS_SRC1_COLOR);
 		BlendParam SRC1_ALPHA(GL_SRC1_ALPHA);
 		BlendParam ONE_MINUS_SRC1_ALPHA(GL_ONE_MINUS_SRC1_ALPHA);
+#endif
 	}
 
 	namespace drawmode {

@@ -68,6 +68,7 @@ namespace opengl {
 							 GLenum(_params.dataType),
 							 _params.data);
 			} else {
+#ifndef __vita__
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D_MULTISAMPLE, _params.handle);
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
 										_params.msaaLevel,
@@ -75,6 +76,7 @@ namespace opengl {
 										_params.width,
 										_params.height,
 										false);
+#endif
 			}
 		}
 
@@ -106,11 +108,13 @@ namespace opengl {
 				m_bind->bind(_params.textureUnitIndex, _params.target, _params.handle);
 				if (m_handle != _params.handle) {
 					m_handle = _params.handle;
+#ifndef __vita__
 					glTexStorage2D(GLuint(_params.target),
 								   _params.mipMapLevels,
 								   GLenum(_params.internalFormat),
 								   _params.width,
 								   _params.height);
+#endif
 				}
 
 				if (_params.data != nullptr) {
@@ -125,6 +129,7 @@ namespace opengl {
 				}
 			}
 			else {
+#ifndef __vita__				
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D_MULTISAMPLE, _params.handle);
 				glTexStorage2DMultisample(
 							GL_TEXTURE_2D_MULTISAMPLE,
@@ -133,6 +138,7 @@ namespace opengl {
 							_params.width,
 							_params.height,
 							GL_FALSE);
+#endif
 			}
 
 		}
@@ -165,11 +171,13 @@ namespace opengl {
 			if (_params.msaaLevel == 0) {
 				if (m_handle != _params.handle) {
 					m_handle = _params.handle;
+#ifndef __vita__
 					glTextureStorage2D(GLuint(_params.handle),
 								   _params.mipMapLevels,
 								   GLenum(_params.internalFormat),
 								   _params.width,
 								   _params.height);
+#endif
 				}
 
 				if (_params.data != nullptr) {
@@ -184,12 +192,14 @@ namespace opengl {
 				}
 			}
 			else {
+#ifndef __vita__
 				glTexStorage2DMultisample(GLuint(_params.handle),
 										  _params.msaaLevel,
 										  GLenum(_params.internalFormat),
 										  _params.width,
 										  _params.height,
 										  GL_FALSE);
+#endif
 			}
 		}
 
@@ -298,6 +308,7 @@ namespace opengl {
 			glTexParameteri(target, GL_TEXTURE_WRAP_T, GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE));
 			(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(graphics::textureParameters::WRAP_CLAMP_TO_EDGE);
 #endif // IOS || EMSCRIPTEN
+#ifndef __vita__			
 			if (m_supportMipmapLevel && _parameters.maxMipmapLevel.isValid() && !(iterValid && iter->second.maxMipmapLevel == GLint(_parameters.maxMipmapLevel))) {
 				glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
 				(*m_texparams)[u32(_parameters.handle)].maxMipmapLevel = GLint(_parameters.maxMipmapLevel);
@@ -306,6 +317,7 @@ namespace opengl {
 				glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxAnisotropy));
 				(*m_texparams)[u32(_parameters.handle)].maxAnisotropy = GLfloat(_parameters.maxAnisotropy);
 			}
+#endif
 		}
 
 	private:
@@ -347,10 +359,12 @@ namespace opengl {
 				glTextureParameteri(handle, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
 			if (_parameters.wrapT.isValid())
 				glTextureParameteri(handle, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
+#ifndef __vita__
 			if (_parameters.maxMipmapLevel.isValid())
 				glTextureParameteri(handle, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
 			if (_parameters.maxAnisotropy.isValid())
 				glTextureParameterf(handle, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxAnisotropy));
+#endif
 		}
 
 	private:
