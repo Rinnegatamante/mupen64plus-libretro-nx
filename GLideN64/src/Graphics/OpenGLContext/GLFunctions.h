@@ -221,7 +221,7 @@ extern PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC ptrEGLImageTargetRenderbuff
 #include <vitaGL.h>
 #define ptrBlendFunc glBlendFunc
 #define ptrBlendFuncSeparate glBlendFuncSeparate
-#define ptrPixelStorei glPixelStorei
+#define ptrPixelStorei
 #define ptrClearColor glClearColor
 #define ptrCullFace glCullFace
 #define ptrDepthFunc glDepthFunc

@@ -3131,9 +3131,11 @@ static void glsm_state_bind(void)
          }
       }
     }
-    
+
+#ifndef __vita__
    glPixelStorei(GL_UNPACK_ALIGNMENT, gl_state.pixelstore.unpack);
    glPixelStorei(GL_PACK_ALIGNMENT, gl_state.pixelstore.pack);
+#endif
 
    if (EnableFBEmulation) {
       gl_state.framebuf[0].location = 0;
