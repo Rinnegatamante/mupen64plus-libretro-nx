@@ -222,17 +222,17 @@ else ifeq ($(platform), libnx)
 # Vita
 else ifeq ($(platform), vita)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
-   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -DARM -marm
-   PLATCFLAGS = -O3 -ffast-math -funsafe-math-optimizations -ffunction-sections -fno-optimize-sibling-calls
-   PLATCFLAGS += $(INCLUDE) -funroll-loops
+   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -DARM -marm -DNDEBUG -fsigned-char -ffast-math -fno-strict-aliasing
+   PLATCFLAGS = -O3
+   PLATCFLAGS += $(INCLUDE)
    CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive
-   COREFLAGS += -DOS_LINUX -DEGL
+   COREFLAGS += -DOS_LINUX -DEGL -DVITA
    GLES = 1
    PIC = 0
    WITH_DYNAREC = arm
    STATIC_LINKING = 1
    HAVE_NEON = 1
-   COREFLAGS += -ftree-vectorize -ftree-vectorizer-verbose=2 -funsafe-math-optimizations -fno-finite-math-only -fno-optimize-sibling-calls
+   COREFLAGS += -fno-optimize-sibling-calls
    CC = arm-vita-eabi-gcc$(EXE_EXT)
    CXX = arm-vita-eabi-g++$(EXE_EXT)
    AR = arm-vita-eabi-ar$(EXE_EXT)
@@ -652,9 +652,11 @@ ifeq ($(DEBUG), 1)
    CPUOPTS += -O0 -g
    CPUOPTS += -DOPENGL_DEBUG
 else
+ifneq ($(platform), vita)
    CPUOPTS += -DNDEBUG -fsigned-char -ffast-math -fno-strict-aliasing -fomit-frame-pointer -fvisibility=hidden
 ifneq ($(platform), libnx)
    CPUOPTS := -O3 $(CPUOPTS)
+endif
 endif
    CXXFLAGS += -fvisibility-inlines-hidden
 endif
