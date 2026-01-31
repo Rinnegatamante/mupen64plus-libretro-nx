@@ -26,6 +26,12 @@
 #include <assert.h>
 #include <sys/types.h>
 
+#ifdef __vita__
+#include <psp2/kernel/sysmem.h>
+static int sceBlock;
+extern int getVMBlock();
+#endif
+
 #if defined(__APPLE__)
 #define MAP_ANONYMOUS MAP_ANON
 #endif
@@ -47,7 +53,9 @@
 
 #if !defined(WIN32)
 #ifndef HAVE_LIBNX
+#ifndef __vita__
 #include <sys/mman.h>
+#endif
 #else
 #include "../../../../../switch/mman.h"
 #endif // HAVE_LIBNX
@@ -2294,6 +2302,10 @@ static void SDR_new(int pcaddr, int count)
 #include "arm64/assem_arm64.c"
 #else
 #error Unsupported dynarec architecture
+#endif
+
+#ifdef __vita__
+int _newlib_vm_size_user = 1 << TARGET_SIZE_2;
 #endif
 
 static void tlb_speed_hacks()
@@ -8695,9 +8707,15 @@ void new_dynarec_init(void)
   base_addr_rx = base_addr;
 #endif
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
+#ifdef __vita__
+  sceBlock = getVMBlock();
+  sceKernelGetMemBlockBase(sceBlock, (void **)&base_addr);
+  sceKernelOpenVMDomain();
+#else
   mprotect ((u_char *)g_dev.r4300.extra_memory, 1<<TARGET_SIZE_2,
             PROT_READ | PROT_WRITE | PROT_EXEC);
   base_addr = g_dev.r4300.extra_memory;
+#endif
   base_addr_rx = base_addr;
 #else
 #if defined(WIN32)
@@ -8772,7 +8790,7 @@ void new_dynarec_cleanup(void)
     VirtualFree(base_addr, 0, MEM_RELEASE);
   #elif NEW_DYNAREC == NEW_DYNAREC_ARM64 && CACHE_ADDR!=FIXED_CACHE_ADDR
     if (munmap (base_addr_rx, 1<<TARGET_SIZE_2) < 0) {DebugMessage(M64MSG_ERROR, "munmap() failed");}
-  #else
+  #elif !defined(__vita__)
     mprotect(base_addr, 1<<TARGET_SIZE_2, PROT_READ | PROT_WRITE);
   #endif
 #endif

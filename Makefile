@@ -228,6 +228,7 @@ else ifeq ($(platform), vita)
    CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive
    COREFLAGS += -DOS_LINUX -DEGL
    GLES = 1
+   PIC = 0
    WITH_DYNAREC = arm
    STATIC_LINKING = 1
    COREFLAGS += -ftree-vectorize -ftree-vectorizer-verbose=2 -funsafe-math-optimizations -fno-finite-math-only -fno-optimize-sibling-calls

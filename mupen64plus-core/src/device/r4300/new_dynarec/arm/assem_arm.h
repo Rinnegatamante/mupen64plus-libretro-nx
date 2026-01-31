@@ -39,7 +39,11 @@
 // Note: FP is set to &dynarec_local when executing generated code.
 // Thus the local variables are actually global and not on the stack.
 
+#ifdef __vita__
+#define TARGET_SIZE_2 24 // 2^24 = 16 megabytes
+#else
 #define TARGET_SIZE_2 25 // 2^25 = 32 megabytes
+#endif
 #define JUMP_TABLE_SIZE (sizeof(jump_table_symbols)*2)
 
 #endif /* M64P_DEVICE_R4300_NEW_DYNAREC_ARM_ASSEM_ARM_H */

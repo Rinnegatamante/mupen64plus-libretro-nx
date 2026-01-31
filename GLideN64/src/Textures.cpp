@@ -740,6 +740,7 @@ void TextureCache::init()
 
 
 	m_pMSDummy = nullptr;
+#ifndef __vita__
 	if (config.video.multisampling != 0 && Context::Multisampling) {
 		m_pMSDummy = addFrameBufferTexture(textureTarget::TEXTURE_2D_MULTISAMPLE); // we don't want to remove dummy texture
 		_initDummyTexture(m_pMSDummy);
@@ -758,7 +759,7 @@ void TextureCache::init()
 		activateMSDummy(0);
 		activateMSDummy(1);
 	}
-
+#endif
 	assert(!gfxContext.isError());
 }
 
@@ -1272,7 +1273,9 @@ void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
 	params.msaaLevel = 0;
 	params.width = _pTexture->width;
 	params.height = _pTexture->height;
+#ifndef __vita__
 	params.internalFormat = internalcolorFormat::R16F;
+#endif
 	params.format = colorFormat::RED;
 	params.dataType = datatype::FLOAT;
 	params.data = pDestFloat.data();
@@ -1880,10 +1883,13 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 
 	Context::TexParameters params;
 	params.handle = _pTexture->name;
+#ifndef __vita__
 	if (config.video.multisampling > 0 && _pTexture->frameBufferTexture == CachedTexture::fbMultiSample) {
 		params.target = textureTarget::TEXTURE_2D_MULTISAMPLE;
 		params.textureUnitIndex = textureIndices::MSTex[_t];
-	} else {
+	} else
+#endif
+	{
 		params.target = textureTarget::TEXTURE_2D;
 		params.textureUnitIndex = textureIndices::Tex[_t];
 		params.minFilter = textureParameters::FILTER_NEAREST;
@@ -1951,11 +1957,13 @@ void TextureCache::activateDummy(u32 _t)
 
 void TextureCache::activateMSDummy(u32 _t)
 {
+#ifndef __vita__
 	Context::TexParameters params;
 	params.handle = m_pMSDummy->name;
 	params.target = textureTarget::TEXTURE_2D_MULTISAMPLE;
 	params.textureUnitIndex = textureIndices::MSTex[_t];
 	gfxContext.setTextureParameters(params);
+#endif
 }
 
 void TextureCache::_updateBackground()

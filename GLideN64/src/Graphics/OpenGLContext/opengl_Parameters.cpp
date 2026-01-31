@@ -16,9 +16,9 @@ namespace graphics {
 		InternalColorFormatParam NOCOLOR(0U);
 		InternalColorFormatParam RGB8(GL_RGB8);
 		InternalColorFormatParam RGBA8(GL_RGBA8);
-#ifndef __vita__
 		InternalColorFormatParam RGBA4(GL_RGBA4);
 		InternalColorFormatParam RGB5_A1(GL_RGB5_A1);
+#ifndef __vita__
 		InternalColorFormatParam RG(GL_RG8);
 		InternalColorFormatParam R16F(GL_R16F);
 #endif
@@ -135,6 +135,11 @@ namespace graphics {
 		BlendParam ONE_MINUS_SRC1_COLOR(GL_ONE_MINUS_SRC1_COLOR);
 		BlendParam SRC1_ALPHA(GL_SRC1_ALPHA);
 		BlendParam ONE_MINUS_SRC1_ALPHA(GL_ONE_MINUS_SRC1_ALPHA);
+#else
+		BlendParam SRC1_COLOR(GL_SRC_COLOR);
+		BlendParam ONE_MINUS_SRC1_COLOR(GL_ONE_MINUS_SRC_COLOR);
+		BlendParam SRC1_ALPHA(GL_SRC_ALPHA);
+		BlendParam ONE_MINUS_SRC1_ALPHA(GL_ONE_MINUS_SRC_ALPHA);
 #endif
 	}
 

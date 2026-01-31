@@ -103,6 +103,10 @@
 #include "lirc.h"
 #endif //WITH_LIRC
 
+#ifdef __vita__
+#define PATH_MAX (1024)
+#endif
+
 /* version number for Core config section */
 #define CONFIG_PARAM_VERSION 1.01
 

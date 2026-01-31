@@ -28,9 +28,10 @@
 #include <mupen64plus-next_common.h>
 
 #if defined(HAVE_OPENGLES)
-#if !defined(IOS)
+#if !defined(IOS) && !defined(__vita__)
 #include <EGL/egl.h>
 #endif // !defined(IOS)
+#ifndef __vita__
 typedef void (GL_APIENTRYP PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex);
 typedef void (GL_APIENTRYP PFNGLBUFFERSTORAGEEXTPROC) (GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);
 typedef void (GL_APIENTRYP PFNGLMEMORYBARRIERPROC) (GLbitfield barriers);
@@ -43,6 +44,7 @@ PFNGLMEMORYBARRIERPROC m_glMemoryBarrier;
 PFNGLBINDIMAGETEXTUREPROC m_glBindImageTexture;
 PFNGLTEXSTORAGE2DMULTISAMPLEPROC m_glTexStorage2DMultisample;
 PFNGLCOPYIMAGESUBDATAPROC m_glCopyImageSubData;
+#endif
 #endif // defined(HAVE_OPENGLES)
 
 #ifndef GL_DEPTH_CLAMP
@@ -392,7 +394,9 @@ void rglValidateProgram(GLuint program)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glValidateProgram.\n");
 #endif
+#ifndef __vita__
    glValidateProgram(program);
+#endif
 }
 
 /*
@@ -1582,7 +1586,9 @@ void rglDetachShader(GLuint program, GLuint shader)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glDetachShader.\n");
 #endif
+#ifndef __vita__
    glDetachShader(program, shader);
+#endif
 }
 
 /*
@@ -2375,7 +2381,7 @@ void rglTexStorage2DMultisample(GLenum target, GLsizei samples,
 #ifndef HAVE_OPENGLES
    glTexStorage2DMultisample(target, samples, internalformat,
          width, height, fixedsamplelocations);
-#else
+#elif !defined(__vita__)
    m_glTexStorage2DMultisample(target, samples, internalformat,
          width, height, fixedsamplelocations);
 #endif
@@ -2404,7 +2410,7 @@ void rglTexStorage2D(GLenum target, GLsizei levels, GLenum internalFormat,
  */
 void rglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex)
 {
-#ifdef HAVE_OPENGLES
+#if defined(HAVE_OPENGLES) && !defined(__vita__)
    bindFBO(GL_FRAMEBUFFER);
    m_glDrawRangeElementsBaseVertex(mode, start, end, count, type, indices, basevertex);
 #else
@@ -2426,7 +2432,7 @@ void rglMemoryBarrier( 	GLbitfield barriers)
 #endif
 #ifndef HAVE_OPENGLES
    glMemoryBarrier(barriers);
-#else
+#elif !defined(__vita__)
    m_glMemoryBarrier(barriers);
 #endif
 }
@@ -2450,7 +2456,7 @@ void rglBindImageTexture( 	GLuint unit,
 #endif
 #ifndef HAVE_OPENGLES
    glBindImageTexture(unit, texture, level, layered, layer, access, format);
-#else
+#elif !defined(__vita__)
    m_glBindImageTexture(unit, texture, level, layered, layer, access, format);
 #endif
 }
@@ -2542,7 +2548,7 @@ void * rglMapBuffer(	GLenum target, GLenum access)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glMapBuffer.\n");
 #endif
-#if defined(HAVE_OPENGLES)
+#if defined(HAVE_OPENGLES) && !defined(__vita__)
    return glMapBufferOES(target, access);
 #else
    return glMapBuffer(target, access);
@@ -2559,7 +2565,7 @@ GLboolean rglUnmapBuffer( 	GLenum target)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUnmapBuffer.\n");
 #endif
-#if defined(HAVE_OPENGLES)
+#if defined(HAVE_OPENGLES) && !defined(__vita__)
    return glUnmapBufferOES(target);
 #else
    return glUnmapBuffer(target);
@@ -2579,7 +2585,9 @@ void rglBlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glBlendColor.\n");
 #endif
+#ifndef __vita__
    glBlendColor(red, green, blue, alpha);
+#endif
 }
 
 /*
@@ -2637,7 +2645,7 @@ void rglCopyImageSubData( 	GLuint srcName,
          srcWidth,
          srcHeight,
          srcDepth);
-#else
+#elif !defined(__vita__)
    m_glCopyImageSubData(srcName,
          srcTarget,
          srcLevel,
@@ -2815,7 +2823,7 @@ void rglBufferStorage(GLenum target, GLsizeiptr size, const GLvoid *data, GLbitf
 #endif
 #ifndef HAVE_OPENGLES
    glBufferStorage(target, size, data, flags);
-#else
+#elif !defined(__vita__)
    m_glBufferStorage(target, size, data, flags);
 #endif
 }
@@ -2994,7 +3002,7 @@ static void glsm_state_setup(void)
       copy_image_support_version = 1;
 #endif
    copy_image_support = isExtensionSupported("GL_ARB_copy_image") || isExtensionSupported("GL_EXT_copy_image") || copy_image_support_version;
-#ifdef HAVE_OPENGLES
+#if defined(HAVE_OPENGLES) && !defined(__vita__)
    m_glDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC)glsm_get_proc_address("glDrawRangeElementsBaseVertex");
    m_glBufferStorage = (PFNGLBUFFERSTORAGEEXTPROC)glsm_get_proc_address("glBufferStorageEXT");
    m_glMemoryBarrier = (PFNGLMEMORYBARRIERPROC)glsm_get_proc_address("glMemoryBarrier");
@@ -3016,9 +3024,11 @@ static void glsm_state_setup(void)
    gl_state.cap_translate[SGL_ALPHA_TEST]               = GL_ALPHA_TEST;
    gl_state.cap_translate[SGL_SCISSOR_TEST]             = GL_SCISSOR_TEST;
    gl_state.cap_translate[SGL_STENCIL_TEST]             = GL_STENCIL_TEST;
+#ifndef __vita__
    gl_state.cap_translate[SGL_DITHER]                   = GL_DITHER;
    gl_state.cap_translate[SGL_SAMPLE_ALPHA_TO_COVERAGE] = GL_SAMPLE_ALPHA_TO_COVERAGE;
    gl_state.cap_translate[SGL_SAMPLE_COVERAGE]          = GL_SAMPLE_COVERAGE;
+#endif
 #ifndef HAVE_OPENGLES
    gl_state.cap_translate[SGL_COLOR_LOGIC_OP]       = GL_COLOR_LOGIC_OP;
    gl_state.cap_translate[SGL_CLIP_DISTANCE0]       = GL_CLIP_DISTANCE0;

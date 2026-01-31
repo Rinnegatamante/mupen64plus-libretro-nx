@@ -483,7 +483,9 @@ void GraphicsDrawer::_ordinaryBlending() const
 				break;
 			case 1:
 				gfxContext.setBlendColor(gDP.fogColor.r, gDP.fogColor.g, gDP.fogColor.b, gDP.fogColor.a);
+#ifndef __vita__
 				dstFactor = blend::CONSTANT_ALPHA;
+#endif
 				break;
 			case 2:
 				assert(false); // shade alpha
@@ -504,7 +506,9 @@ void GraphicsDrawer::_ordinaryBlending() const
 					break;
 				case 1:
 					gfxContext.setBlendColor(gDP.fogColor.r, gDP.fogColor.g, gDP.fogColor.b, gDP.fogColor.a);
+#ifndef __vita__
 					dstFactor = blend::ONE_MINUS_CONSTANT_ALPHA;
+#endif
 					break;
 				case 2:
 					assert(false); // shade alpha
@@ -703,6 +707,7 @@ void GraphicsDrawer::_updateStates(DrawingState _drawingState) const
 				return;
 
 			if (Context::FramebufferFetchDepth) {
+#ifndef __vita__
 				FrameBuffer * pFrameBuffer = fbList.findBuffer(gDP.colorImage.address);
 				if (pFrameBuffer == nullptr)
 					return;
@@ -727,6 +732,7 @@ void GraphicsDrawer::_updateStates(DrawingState _drawingState) const
 				gfxContext.addFrameBufferRenderTarget(targetParams);
 
 				gfxContext.setDrawBuffers(5);
+#endif
 			} else if (Context::ImageTextures) {
 				Context::BindImageTextureParameters bindParams;
 				bindParams.imageUnit = textureImageUnits::DepthZ;
@@ -1729,9 +1735,12 @@ void GraphicsDrawer::copyTexturedRect(const CopyRectParams & _params)
 		Context::TexParameters texParams;
 		texParams.handle = tex->name;
 		texParams.textureUnitIndex = textureIndices::Tex[i];
+#ifndef __vita__
 		if (tex->frameBufferTexture == CachedTexture::fbMultiSample)
 			texParams.target = textureTarget::TEXTURE_2D_MULTISAMPLE;
-		else {
+		else
+#endif
+		{
 			texParams.target = textureTarget::TEXTURE_2D;
 			texParams.minFilter = _params.filter;
 			texParams.magFilter = _params.filter;

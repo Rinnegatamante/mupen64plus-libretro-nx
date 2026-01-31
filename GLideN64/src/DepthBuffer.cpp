@@ -197,7 +197,11 @@ void DepthBuffer::setDepthAttachment(ObjectHandle _fbo, BufferTargetParam _targe
 	params.bufferTarget = _target;
 	if (Context::DepthFramebufferTextures) {
 		params.textureHandle = m_pDepthBufferTexture->name;
+#ifdef __vita__
+		params.textureTarget = textureTarget::TEXTURE_2D;
+#else
 		params.textureTarget = config.video.multisampling != 0 ? textureTarget::TEXTURE_2D_MULTISAMPLE : textureTarget::TEXTURE_2D;
+#endif
 	} else {
 		params.textureHandle = m_depthRenderbuffer;
 		params.textureTarget = textureTarget::RENDERBUFFER;
@@ -212,8 +216,12 @@ void DepthBuffer::initDepthBufferTexture(FrameBuffer * _pBuffer)
 {
 	if (Context::DepthFramebufferTextures) {
 		if (m_pDepthBufferTexture == nullptr) {
+#ifdef __vita__
+			m_pDepthBufferTexture = textureCache().addFrameBufferTexture(textureTarget::TEXTURE_2D);
+#else
 			m_pDepthBufferTexture = textureCache().addFrameBufferTexture(config.video.multisampling != 0 ?
 					textureTarget::TEXTURE_2D_MULTISAMPLE : textureTarget::TEXTURE_2D);
+#endif
 			_initDepthBufferTexture(_pBuffer, m_pDepthBufferTexture, config.video.multisampling != 0);
 		}
 	} else {
@@ -323,6 +331,7 @@ void DepthBuffer::activateDepthBufferTexture(FrameBuffer * _pBuffer)
 void DepthBuffer::bindDepthImageTexture(ObjectHandle _fbo)
 {
 	if (Context::FramebufferFetchDepth) {
+#ifndef __vita__
 		Context::FrameBufferRenderTarget targetParams;
 		targetParams.bufferHandle = _fbo;
 		targetParams.bufferTarget = bufferTarget::DRAW_FRAMEBUFFER;
@@ -336,6 +345,7 @@ void DepthBuffer::bindDepthImageTexture(ObjectHandle _fbo)
 		gfxContext.addFrameBufferRenderTarget(targetParams);
 
 		gfxContext.setDrawBuffers(3);
+#endif
 	} else if (Context::ImageTextures) {
 		Context::BindImageTextureParameters bindParams;
 		bindParams.imageUnit = textureImageUnits::DepthZ;

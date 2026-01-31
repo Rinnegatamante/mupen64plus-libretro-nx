@@ -101,6 +101,7 @@ void ContextImpl::destroy()
 
 void ContextImpl::setClampMode(graphics::ClampMode _mode)
 {
+#ifndef __vita__
 	if (!m_glInfo.isGLESX) {
 		switch (_mode) {
 		case graphics::ClampMode::ClippingEnabled:
@@ -117,6 +118,7 @@ void ContextImpl::setClampMode(graphics::ClampMode _mode)
 			break;
 		}
 	}
+#endif
 	m_clampMode = _mode;
 }
 
@@ -299,10 +301,8 @@ u32 ContextImpl::convertInternalTextureFormat(u32 _format) const
 	case GL_RGB8:
 		return GL_RGB;
 	case GL_RGBA8:
-#ifndef __vita__
 	case GL_RGBA4:
 	case GL_RGB5_A1:
-#endif
 		return GL_RGBA;
 	}
 

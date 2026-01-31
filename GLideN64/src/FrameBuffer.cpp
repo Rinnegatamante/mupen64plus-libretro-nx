@@ -36,8 +36,12 @@ FrameBuffer::FrameBuffer()
 	, m_ColorBufferFBO(0)
 	, m_pColorBufferTexture(nullptr)
 {
+#ifdef __vita__
+	m_pTexture = textureCache().addFrameBufferTexture(textureTarget::TEXTURE_2D);
+#else
 	m_pTexture = textureCache().addFrameBufferTexture(config.video.multisampling != 0 ?
 		textureTarget::TEXTURE_2D_MULTISAMPLE : textureTarget::TEXTURE_2D);
+#endif
 	m_FBO = gfxContext.createFramebuffer();
 
 	if (config.frameBufferEmulation.copyDepthToMainDepthBuffer != 0)
@@ -130,7 +134,11 @@ void _setAndAttachBufferTexture(ObjectHandle _fbo, CachedTexture *_pTexture, u32
 	bufTarget.bufferHandle = _fbo;
 	bufTarget.bufferTarget = bufferTarget::FRAMEBUFFER;
 	bufTarget.attachment = bufferAttachment::COLOR_ATTACHMENT0;
+#ifdef __vita__
+	bufTarget.textureTarget = textureTarget::TEXTURE_2D;
+#else
 	bufTarget.textureTarget = _multisampling ? textureTarget::TEXTURE_2D_MULTISAMPLE : textureTarget::TEXTURE_2D;
+#endif
 	bufTarget.textureHandle = _pTexture->name;
 	gfxContext.addFrameBufferRenderTarget(bufTarget);
 	assert(!gfxContext.isFramebufferError());
@@ -426,8 +434,12 @@ CachedTexture * FrameBuffer::_getSubTexture(u32 _t)
 void FrameBuffer::_initCopyTexture()
 {
 	m_copyFBO = gfxContext.createFramebuffer();
+#ifdef __vita__
+	m_pFrameBufferCopyTexture = textureCache().addFrameBufferTexture(textureTarget::TEXTURE_2D);
+#else
 	m_pFrameBufferCopyTexture = textureCache().addFrameBufferTexture(config.video.multisampling != 0 ?
 		textureTarget::TEXTURE_2D_MULTISAMPLE : textureTarget::TEXTURE_2D);
+#endif
 	_initTexture(static_cast<u16>(m_width), VI_GetMaxBufferHeight(static_cast<u16>(m_width)),
 				 m_pTexture->format, m_pTexture->size, m_pFrameBufferCopyTexture);
 	_setAndAttachTexture(m_copyFBO, m_pFrameBufferCopyTexture, 0, config.video.multisampling != 0);

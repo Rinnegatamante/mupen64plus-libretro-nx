@@ -31,7 +31,7 @@
 
 RETRO_BEGIN_DECLS
 
-#if defined(HAVE_OPENGLES2)
+#if defined(HAVE_OPENGLES2) && !defined(__vita__)
 typedef double GLclampd;
 typedef double GLdouble;
 typedef struct __GLsync* GLsync;

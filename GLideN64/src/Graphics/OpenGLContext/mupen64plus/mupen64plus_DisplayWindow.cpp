@@ -76,7 +76,7 @@ bool DisplayWindowMupen64plus::_start()
 	_getDisplaySize();
 	_setBufferSize();
 
-#ifdef EGL
+#if defined(EGL) && !defined(__vita__)
 	eglInitialize(eglGetDisplay(EGL_DEFAULT_DISPLAY), nullptr, nullptr);
 #endif // EGL
 
@@ -142,7 +142,7 @@ void DisplayWindowMupen64plus::_readScreen(void **_pDest, long *_pWidth, long *_
 	if (*_pDest == nullptr)
 		return;
 
-#ifndef GLESX
+#if !defined(GLESX) && !defined(__vita__)
 	GLint oldMode;
 	glGetIntegerv(GL_READ_BUFFER, &oldMode);
 	gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, graphics::ObjectHandle::defaultFramebuffer);
@@ -170,7 +170,7 @@ void DisplayWindowMupen64plus::_readScreen2(void * _dest, int * _width, int * _h
 	if (_dest == nullptr)
 		return;
 
-#if !defined(OS_ANDROID) && !defined(OS_IOS)
+#if !defined(OS_ANDROID) && !defined(OS_IOS) && !defined(__vita__)
 	GLint oldMode;
 	glGetIntegerv(GL_READ_BUFFER, &oldMode);
 	if (_front != 0)

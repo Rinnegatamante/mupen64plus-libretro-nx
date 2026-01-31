@@ -246,7 +246,7 @@ void* init_mem_base(void)
 #ifdef _WIN32
     mem_base = _aligned_malloc(MB_MAX_SIZE_FULL, MB_RDRAM_DRAM_ALIGNMENT_REQUIREMENT);
 #else
-#ifdef HAVE_LIBNX
+#if defined(HAVE_LIBNX) || defined(__vita__)
     if (!(mem_base = memalign(MB_RDRAM_DRAM_ALIGNMENT_REQUIREMENT, MB_MAX_SIZE_FULL)))
         mem_base = NULL;
 #else

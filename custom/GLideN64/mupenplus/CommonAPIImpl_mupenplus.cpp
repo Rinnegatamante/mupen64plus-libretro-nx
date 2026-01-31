@@ -83,6 +83,7 @@ void PluginAPI::FindPluginPath(wchar_t * _strPath)
 {
 	if (_strPath == nullptr)
 		return;
+#ifndef __vita__
 #ifdef OS_WINDOWS
 	GetModuleFileNameW(nullptr, _strPath, PLUGIN_PATH_SIZE);
 	_cutLastPathSeparator(_strPath);
@@ -101,5 +102,6 @@ void PluginAPI::FindPluginPath(wchar_t * _strPath)
 	}
 #elif defined(ANDROID)
 	GetUserCachePath(_strPath);
+#endif
 #endif
 }
