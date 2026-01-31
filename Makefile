@@ -222,7 +222,7 @@ else ifeq ($(platform), libnx)
 # Vita
 else ifeq ($(platform), vita)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
-   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -DARM -marm -DNDEBUG -fsigned-char -ffast-math -fno-strict-aliasing
+   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -DARM -marm -DNDEBUG -fsigned-char -ffast-math -fno-strict-aliasing -fno-short-enums
    PLATCFLAGS = -O3
    PLATCFLAGS += $(INCLUDE)
    CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive

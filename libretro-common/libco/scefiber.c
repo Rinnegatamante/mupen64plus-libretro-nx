@@ -33,12 +33,12 @@ cothread_t co_active(void)
 cothread_t co_create(unsigned int heapsize, void (*coentry)(void))
 {
 	int ret;
-	SceFiber *tail_fiber	= (SceFiber *)malloc(sizeof(SceFiber));
-	char *m_ctxbuf		  = (char *)malloc(sizeof(char) * heapsize);
+	SceFiber *tail_fiber = (SceFiber *)malloc(sizeof(SceFiber));
+	char *m_ctxbuf = (char *)malloc(sizeof(char) * heapsize);
 	if (!co_inited)
 	{
 		sceSysmoduleLoadModule(SCE_SYSMODULE_FIBER);
-	  co_inited = 1;
+		co_inited = 1;
 	}
 
 	/* _sceFiberInitializeImpl */
@@ -60,17 +60,17 @@ void co_switch(cothread_t cothread)
 	uint32_t argOnReturn  = 0;
 	if (cothread == (cothread_t)0)
 	{
-		co_active_			= cothread;
+		co_active_ = cothread;
 		sceFiberReturnToThread(0, NULL);
 	}
 	else
 	{
 		SceFiber* theFiber = (SceFiber*)cothread;
 		if (co_active_ == (cothread_t)0) {
-		 co_active_ = cothread;
+			co_active_ = cothread;
 			sceFiberRun(theFiber, 0, &argOnReturn);
 		} else {
-		 co_active_ = cothread;
+			co_active_ = cothread;
 			sceFiberSwitch(theFiber, 0, &argOnReturn); 
 	  }
 	}
