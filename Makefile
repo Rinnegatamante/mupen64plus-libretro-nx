@@ -222,7 +222,7 @@ else ifeq ($(platform), libnx)
 # Vita
 else ifeq ($(platform), vita)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
-   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard
+   CPUOPTS := -g -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard -DARM -marm
    PLATCFLAGS = -O3 -ffast-math -funsafe-math-optimizations -ffunction-sections -fno-optimize-sibling-calls
    PLATCFLAGS += $(INCLUDE) -funroll-loops
    CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive
@@ -231,6 +231,7 @@ else ifeq ($(platform), vita)
    PIC = 0
    WITH_DYNAREC = arm
    STATIC_LINKING = 1
+   HAVE_NEON = 1
    COREFLAGS += -ftree-vectorize -ftree-vectorizer-verbose=2 -funsafe-math-optimizations -fno-finite-math-only -fno-optimize-sibling-calls
    CC = arm-vita-eabi-gcc$(EXE_EXT)
    CXX = arm-vita-eabi-g++$(EXE_EXT)

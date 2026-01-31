@@ -53,8 +53,9 @@ PFNGLCOPYIMAGESUBDATAPROC m_glCopyImageSubData;
 #define GL_SAMPLE_MASK                    0x8E51
 #endif
 
-#define MAX_FRAMEBUFFERS 128000
-#define MAX_UNIFORMS 1024
+#define MAX_FRAMEBUFFERS 256
+#define MAX_PROGRAMS 256
+#define MAX_UNIFORMS 64
 
 #if 0
 extern retro_log_printf_t log_cb;
@@ -269,7 +270,7 @@ struct retro_hw_render_callback hw_render;
 static struct gl_cached_state gl_state;
 
 static bool copy_image_support = 0;
-static struct gl_program_uniforms program_uniforms[MAX_UNIFORMS][MAX_UNIFORMS];
+static struct gl_program_uniforms program_uniforms[MAX_PROGRAMS][MAX_UNIFORMS];
 static struct gl_framebuffers* framebuffers[MAX_FRAMEBUFFERS];
 
 static GLenum active_texture;

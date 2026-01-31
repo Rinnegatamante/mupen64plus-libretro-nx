@@ -28,7 +28,7 @@
 
 #ifdef __vita__
 #include <psp2/kernel/sysmem.h>
-static int sceBlock;
+int sceBlock;
 extern int getVMBlock();
 #endif
 

@@ -239,9 +239,17 @@ static u_int jump_table_symbols[] = {
   (int)breakpoint
 };
 
+#ifdef __vita__
+extern int sceBlock;
+#endif
+
 static void cache_flush(char* start, char* end)
 {
+#ifdef __vita__
+	sceKernelSyncVMDomain(sceBlock, (void*)start, (uintptr_t)end - (uintptr_t)start);
+#else
     __clear_cache(start, end);
+#endif
 }
 
 /* Linker */

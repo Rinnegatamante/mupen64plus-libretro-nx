@@ -178,10 +178,12 @@ struct r4300_core
         uint64_t wdword;
     } recomp;
 #else
+#ifndef __vita__
     /* FIXME: better put that near linkage_arm code
      * to help generate call beyond the +/-32MB range.
      */
     ALIGN(4096, char extra_memory[33554432]);
+#endif
     struct new_dynarec_hot_state new_dynarec_hot_state;
 #endif /* NEW_DYNAREC */
 
