@@ -23,9 +23,6 @@
 #ifndef RGLGEN_PRIVATE_HEADERS_H__
 #define RGLGEN_PRIVATE_HEADERS_H__
 
-#ifdef __vita__
-#include <vitaGL.h>
-#else
 #if defined(IOS)
 
 #if defined(HAVE_OPENGLES3)
@@ -36,6 +33,9 @@
 #include <OpenGLES/ES2/glext.h>
 #endif
 
+#elif defined(__vita__)
+#include "switch/nx_gl.h"
+#include <GL/glext.h>
 #elif defined(__APPLE__)
 #include <compat/apple_compat.h>
 #if MAC_OS_X_VERSION_10_7
@@ -74,7 +74,6 @@
 #include "switch/nx_gl.h"
 #include <GL/glext.h>
 #endif /* SWITCH */
-#endif
 #endif
 
 #endif

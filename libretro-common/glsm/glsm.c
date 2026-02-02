@@ -28,10 +28,9 @@
 #include <mupen64plus-next_common.h>
 
 #if defined(HAVE_OPENGLES)
-#if !defined(IOS) && !defined(__vita__)
+#if !defined(IOS)
 #include <EGL/egl.h>
 #endif // !defined(IOS)
-#ifndef __vita__
 typedef void (GL_APIENTRYP PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex);
 typedef void (GL_APIENTRYP PFNGLBUFFERSTORAGEEXTPROC) (GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);
 typedef void (GL_APIENTRYP PFNGLMEMORYBARRIERPROC) (GLbitfield barriers);
@@ -44,7 +43,6 @@ PFNGLMEMORYBARRIERPROC m_glMemoryBarrier;
 PFNGLBINDIMAGETEXTUREPROC m_glBindImageTexture;
 PFNGLTEXSTORAGE2DMULTISAMPLEPROC m_glTexStorage2DMultisample;
 PFNGLCOPYIMAGESUBDATAPROC m_glCopyImageSubData;
-#endif
 #endif // defined(HAVE_OPENGLES)
 
 #ifndef GL_DEPTH_CLAMP
@@ -1644,7 +1642,7 @@ void rglShaderSource(GLuint shader, GLsizei count, const GLchar *const*string, c
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glShaderSource.\n");
 #endif
-   return glShaderSource(shader, count, string, length);
+   glShaderSource(shader, count, string, length);
 }
 
 /*
@@ -2382,7 +2380,7 @@ void rglTexStorage2DMultisample(GLenum target, GLsizei samples,
 #ifndef HAVE_OPENGLES
    glTexStorage2DMultisample(target, samples, internalformat,
          width, height, fixedsamplelocations);
-#elif !defined(__vita__)
+#else
    m_glTexStorage2DMultisample(target, samples, internalformat,
          width, height, fixedsamplelocations);
 #endif
@@ -2411,7 +2409,7 @@ void rglTexStorage2D(GLenum target, GLsizei levels, GLenum internalFormat,
  */
 void rglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex)
 {
-#if defined(HAVE_OPENGLES) && !defined(__vita__)
+#if defined(HAVE_OPENGLES)
    bindFBO(GL_FRAMEBUFFER);
    m_glDrawRangeElementsBaseVertex(mode, start, end, count, type, indices, basevertex);
 #else
@@ -2549,7 +2547,7 @@ void * rglMapBuffer(	GLenum target, GLenum access)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glMapBuffer.\n");
 #endif
-#if defined(HAVE_OPENGLES) && !defined(__vita__)
+#if defined(HAVE_OPENGLES)
    return glMapBufferOES(target, access);
 #else
    return glMapBuffer(target, access);
@@ -2566,7 +2564,7 @@ GLboolean rglUnmapBuffer( 	GLenum target)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUnmapBuffer.\n");
 #endif
-#if defined(HAVE_OPENGLES) && !defined(__vita__)
+#if defined(HAVE_OPENGLES)
    return glUnmapBufferOES(target);
 #else
    return glUnmapBuffer(target);
@@ -2646,7 +2644,7 @@ void rglCopyImageSubData( 	GLuint srcName,
          srcWidth,
          srcHeight,
          srcDepth);
-#elif !defined(__vita__)
+#else
    m_glCopyImageSubData(srcName,
          srcTarget,
          srcLevel,
@@ -3003,7 +3001,7 @@ static void glsm_state_setup(void)
       copy_image_support_version = 1;
 #endif
    copy_image_support = isExtensionSupported("GL_ARB_copy_image") || isExtensionSupported("GL_EXT_copy_image") || copy_image_support_version;
-#if defined(HAVE_OPENGLES) && !defined(__vita__)
+#if defined(HAVE_OPENGLES)
    m_glDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC)glsm_get_proc_address("glDrawRangeElementsBaseVertex");
    m_glBufferStorage = (PFNGLBUFFERSTORAGEEXTPROC)glsm_get_proc_address("glBufferStorageEXT");
    m_glMemoryBarrier = (PFNGLMEMORYBARRIERPROC)glsm_get_proc_address("glMemoryBarrier");
@@ -3071,8 +3069,12 @@ static void glsm_state_setup(void)
 
    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &params);
    framebuffers[default_framebuffer]->color_attachment = params;
+#ifdef __vita__
+   framebuffers[default_framebuffer]->depth_attachment = 0;
+#else
    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &params);
    framebuffers[default_framebuffer]->depth_attachment = params;
+#endif
    framebuffers[default_framebuffer]->target = GL_TEXTURE_2D;
 
    gl_state.cullface.mode               = GL_BACK;

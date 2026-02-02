@@ -1,9 +1,5 @@
 #ifdef __LIBRETRO__
-#ifndef __vita__
 #include <glsm/glsmsym.h>
-#else
-#include <glsm/glsm_state_ctl.h>
-#endif
 #define NO_GL_WRAP 1
 #endif
 
@@ -82,7 +78,6 @@ static void* IOSGLGetProcAddress (const char *name)
 #endif
 #endif // if 0
 
-#ifndef __vita__
 //GL Functions
 PFNGLBLENDFUNCPROC ptrBlendFunc;
 PFNGLBLENDFUNCSEPARATEPROC ptrBlendFuncSeparate;
@@ -224,7 +219,6 @@ PFNGLDEBUGMESSAGECONTROLPROC ptrDebugMessageControl;
 PFNGLCOPYTEXIMAGE2DPROC ptrCopyTexImage2D;
 PFNGLEGLIMAGETARGETTEXTURE2DOESPROC ptrEGLImageTargetTexture2DOES;
 PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC ptrEGLImageTargetRenderbufferStorageOES;
-#endif
 
 extern "C" void initGLFunctions()
 {
@@ -240,7 +234,6 @@ extern "C" void initGLFunctions()
 #endif
 #endif // if 0
 
-#ifndef __vita__
 #if defined(EGL) || defined(OS_IOS)
 	ASSIGN_PROC_ADR(PFNGLBLENDFUNCPROC, BlendFunc);
 	ASSIGN_PROC_ADR(PFNGLPIXELSTOREIPROC, PixelStorei);
@@ -417,5 +410,4 @@ extern "C" void initGLFunctions()
 	GL_GET_PROC_ADR(PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC, EGLImageTargetRenderbufferStorageOES);
 
 	ASSIGN_PROC_ADR(PFNGLBLENDFUNCSEPARATEPROC, BlendFuncSeparate);
-#endif
 }

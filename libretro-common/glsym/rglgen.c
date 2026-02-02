@@ -38,10 +38,8 @@ void rglgen_resolve_symbols_custom(rglgen_proc_address_t proc,
 
 void rglgen_resolve_symbols(rglgen_proc_address_t proc)
 {
-#ifndef __vita__ // Vita has statically linekd OpenGL
    if (!proc)
       return;
 
    rglgen_resolve_symbols_custom(proc, rglgen_symbol_map);
-#endif
 }

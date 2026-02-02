@@ -72,7 +72,7 @@ void co_switch(cothread_t cothread)
 		} else {
 			co_active_ = cothread;
 			sceFiberSwitch(theFiber, 0, &argOnReturn); 
-	  }
+		}
 	}
 }
 

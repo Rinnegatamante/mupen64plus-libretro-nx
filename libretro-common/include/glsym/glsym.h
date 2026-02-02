@@ -25,11 +25,6 @@
 
 #include "rglgen.h"
 
-#ifdef __vita__
-#include <vitaGL.h>
-struct rglgen_sym_map { const char *sym; void *ptr; };
-extern const struct rglgen_sym_map rglgen_symbol_map[];
-#else
 #ifndef HAVE_PSGL
 #if defined(HAVE_OPENGLES2)
 #include "glsym_es2.h"
@@ -40,7 +35,6 @@ extern const struct rglgen_sym_map rglgen_symbol_map[];
 #include "switch/nx_glsym.h"
 #endif
 #include "glsym_gl.h"
-#endif
 #endif
 #endif
 
