@@ -23,6 +23,10 @@
 #ifndef LIBRETRO_SDK_GLSM_SYM_H
 #define LIBRETRO_SDK_GLSM_SYM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <glsm/glsm.h>
 
 #ifdef HAVE_GLSYM_PRIVATE
@@ -478,5 +482,9 @@ void rglProvokingVertex(	GLenum provokeMode);
 void rglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex);
 
 RETRO_END_DECLS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

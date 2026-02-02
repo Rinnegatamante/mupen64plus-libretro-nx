@@ -23,6 +23,10 @@
 #ifndef LIBRETRO_SDK_GLSM_H
 #define LIBRETRO_SDK_GLSM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <retro_common_api.h>
 
 #include <boolean.h>
@@ -31,7 +35,7 @@
 
 RETRO_BEGIN_DECLS
 
-#if defined(HAVE_OPENGLES2) && !defined(__vita__)
+#if defined(HAVE_OPENGLES2)
 typedef double GLclampd;
 typedef double GLdouble;
 typedef struct __GLsync* GLsync;
@@ -132,5 +136,9 @@ typedef struct glsm_ctx_params
 GLuint glsm_get_current_framebuffer(void);
 
 RETRO_END_DECLS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

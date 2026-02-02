@@ -34,8 +34,8 @@
 #endif
 
 #elif defined(__vita__)
-#include "switch/nx_gl.h"
-#include <GL/glext.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #elif defined(__APPLE__)
 #include <compat/apple_compat.h>
 #if MAC_OS_X_VERSION_10_7

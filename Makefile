@@ -226,7 +226,7 @@ else ifeq ($(platform), vita)
    PLATCFLAGS = -O3
    PLATCFLAGS += $(INCLUDE)
    CXXFLAGS += -fno-rtti -std=gnu++11 -fpermissive
-   COREFLAGS += -DOS_LINUX -DEGL -DVITA
+   COREFLAGS += -DOS_LINUX -DVITA
    GLES = 1
    PIC = 0
    WITH_DYNAREC = arm
