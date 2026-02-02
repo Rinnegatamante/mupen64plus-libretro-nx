@@ -134,11 +134,9 @@ public:
 		, m_size(_size)
 	{
 		glGenBuffers(1, &m_PBO);
-#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
 		glBufferData(GL_PIXEL_PACK_BUFFER, m_size, nullptr, GL_DYNAMIC_READ);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
-#endif
 	}
 
 	~PBOReadBuffer() {
@@ -155,30 +153,20 @@ public:
 	{
 		if (_range > m_size)
 			_range = static_cast<u32>(m_size);
-#ifndef __vita__
 		return glMapBufferRange(GL_PIXEL_PACK_BUFFER, _offset, _range, GL_MAP_READ_BIT);
-#else
-		return nullptr;
-#endif
 	}
 
 	void closeReadBuffer() override
 	{
-#ifndef __vita__
 		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-#endif
 	}
 
 	void bind() override {
-#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
-#endif
 	}
 
 	void unbind() override {
-#ifndef __vita__
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
-#endif
 	}
 
 private:

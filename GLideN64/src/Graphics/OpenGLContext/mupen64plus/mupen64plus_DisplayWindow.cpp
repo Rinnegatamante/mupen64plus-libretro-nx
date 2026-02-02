@@ -142,7 +142,7 @@ void DisplayWindowMupen64plus::_readScreen(void **_pDest, long *_pWidth, long *_
 	if (*_pDest == nullptr)
 		return;
 
-#if !defined(GLESX) && !defined(__vita__)
+#if !defined(GLESX)
 	GLint oldMode;
 	glGetIntegerv(GL_READ_BUFFER, &oldMode);
 	gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, graphics::ObjectHandle::defaultFramebuffer);

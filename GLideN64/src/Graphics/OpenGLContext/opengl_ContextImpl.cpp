@@ -287,9 +287,7 @@ f32 ContextImpl::getMaxAnisotropy() const
 
 void ContextImpl::bindImageTexture(const graphics::Context::BindImageTextureParameters & _params)
 {
-#ifndef __vita__
 	glBindImageTexture(GLuint(_params.imageUnit), GLuint(_params.texture), 0, GL_FALSE, 0, GLenum(_params.accessMode), GLenum(_params.textureFormat));
-#endif
 }
 
 u32 ContextImpl::convertInternalTextureFormat(u32 _format) const

@@ -1033,7 +1033,6 @@ namespace opengl {
 		void* returnValue;
 
 		if (m_threaded_wrapper) {
-#ifndef __vita__
 			GLuint boundPixelBuffer = GlReadPixelsAsyncCommand::getBoundBuffer();
 			if (target == GL_PIXEL_PACK_BUFFER && access == GL_MAP_READ_BIT &&
 				GlBindBufferCommand::getBoundBuffer(GL_PIXEL_PACK_BUFFER) != boundPixelBuffer) {
@@ -1048,7 +1047,6 @@ namespace opengl {
 			else {
 				executeCommand(GlMapBufferRangeCommand::get(target, offset, length, access, returnValue));
 			}
-#endif
 		}
 		else {
 			returnValue = ptrMapBufferRange(target, offset, length, access);
@@ -1613,35 +1611,27 @@ namespace opengl {
 		switch (format)
 		{
 		case GL_RED:
-#ifndef __vita__
 		case GL_RED_INTEGER:
 		case GL_STENCIL_INDEX:
-#endif
 		case GL_DEPTH_COMPONENT:
 		case GL_LUMINANCE:
 			components = 1;
 			break;
 		case GL_RG:
-#ifndef __vita__
 		case GL_RG_INTEGER:
 		case GL_DEPTH_STENCIL:
-#endif
 			components = 2;
 			break;
 		case GL_RGB:
 		case GL_BGR:
-#ifndef __vita__
 		case GL_RGB_INTEGER:
 		case GL_BGR_INTEGER:
-#endif
 			components = 3;
 			break;
 		case GL_RGBA:
 		case GL_BGRA:
-#ifndef __vita__
 		case GL_RGBA_INTEGER:
 		case GL_BGRA_INTEGER:
-#endif
 			components = 4;
 			break;
 		default:
@@ -1664,30 +1654,22 @@ namespace opengl {
 		case GL_FLOAT:
 			bytesPerPixel = components * 4;
 			break;
-#ifndef __vita__
 		case GL_UNSIGNED_BYTE_3_3_2:
 		case GL_UNSIGNED_BYTE_2_3_3_REV:
 			bytesPerPixel = 1;
 			break;
-#endif
 		case GL_UNSIGNED_SHORT_5_6_5:
-#ifndef __vita__
 		case GL_UNSIGNED_SHORT_5_6_5_REV:
-#endif
 		case GL_UNSIGNED_SHORT_4_4_4_4:
-#ifndef __vita__
 		case GL_UNSIGNED_SHORT_4_4_4_4_REV:
-#endif
 		case GL_UNSIGNED_SHORT_5_5_5_1:
 		case GL_UNSIGNED_SHORT_1_5_5_5_REV:
 			bytesPerPixel = 2;
 			break;
 		case GL_UNSIGNED_INT_8_8_8_8:
 		case GL_UNSIGNED_INT_8_8_8_8_REV:
-#ifndef __vita__
 		case GL_UNSIGNED_INT_10_10_10_2:
 		case GL_UNSIGNED_INT_2_10_10_10_REV:
-#endif
 			bytesPerPixel = 4;
 			break;
 		default:

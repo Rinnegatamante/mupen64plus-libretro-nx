@@ -268,7 +268,9 @@ struct retro_hw_render_callback hw_render;
 static struct gl_cached_state gl_state;
 
 static bool copy_image_support = 0;
+#ifndef __vita__
 static struct gl_program_uniforms program_uniforms[MAX_PROGRAMS][MAX_UNIFORMS];
+#endif
 static struct gl_framebuffers* framebuffers[MAX_FRAMEBUFFERS];
 
 static GLenum active_texture;
@@ -1025,7 +1027,7 @@ void rglFramebufferTexture(GLenum target, GLenum attachment,
    log_cb(RETRO_LOG_INFO, "glFramebufferTexture.\n");
 #endif
    bindFBO(target);
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3_2)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3_2)
    glFramebufferTexture(target, attachment, texture, level);
 #endif
 }
@@ -1289,7 +1291,7 @@ void rglProgramParameteri( 	GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glProgramParameteri.\n");
 #endif
-#if !defined(HAVE_OPENGLES) || defined(HAVE_OPENGLES) && (defined(HAVE_OPENGLES3) || defined(HAVE_OPENGLES_3_1))
+#if !defined(HAVE_OPENGLES) || (defined(HAVE_OPENGLES3) || defined(HAVE_OPENGLES_3_1))
    glProgramParameteri(program, pname, value);
 #else
    printf("WARNING! Not implemented.\n");
@@ -1316,7 +1318,7 @@ void rglGenQueries(	GLsizei n,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGenQueries.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glGenQueries(n, ids);
 #endif
 }
@@ -1328,7 +1330,7 @@ void rglGetQueryObjectuiv(	GLuint id,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetQueryObjectuiv.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glGetQueryObjectuiv(id, pname, params);
 #endif
 }
@@ -1339,7 +1341,7 @@ void rglDeleteQueries(	GLsizei n,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glDeleteQueries.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glDeleteQueries(n, ids);
 #endif
 }
@@ -1350,7 +1352,7 @@ void rglBeginQuery(	GLenum target,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glBeginQuery.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glBeginQuery(target, id);
 #endif
 }
@@ -1360,7 +1362,7 @@ void rglEndQuery(	GLenum target)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glEndQuery.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glEndQuery(target);
 #endif
 }
@@ -1381,7 +1383,7 @@ void rglGetActiveUniformBlockiv(GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetActiveUniformBlockiv.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glGetActiveUniformBlockiv(program, uniformBlockIndex,
          pname, params);
 #else
@@ -1404,7 +1406,7 @@ void rglGetActiveUniformsiv( 	GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetActiveUniformsiv.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glGetActiveUniformsiv(program, uniformCount,
          uniformIndices, pname, params);
 #else
@@ -1423,7 +1425,7 @@ void rglGetUniformIndices(GLuint program, GLsizei uniformCount, const GLchar *co
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetUniformIndices.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glGetUniformIndices(program, uniformCount,
          uniformNames, uniformIndices);
 #else
@@ -1445,7 +1447,7 @@ void rglBindBufferBase( 	GLenum target,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glBindBufferBase.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glBindBufferBase(target, index, buffer);
 #else
    printf("WARNING! Not implemented.\n");
@@ -1466,7 +1468,7 @@ GLuint rglGetUniformBlockIndex( 	GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetUniformBlockIndex.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    return glGetUniformBlockIndex(program, uniformBlockName);
 #else
    printf("WARNING! Not implemented.\n");
@@ -1488,7 +1490,7 @@ void rglUniformBlockBinding( 	GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniformBlockBinding.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glUniformBlockBinding(program, uniformBlockIndex,
          uniformBlockBinding);
 #else
@@ -1507,7 +1509,7 @@ void rglUniform1ui(GLint location, GLuint v)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform1ui.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glUniform1ui(location ,v);
 #endif
 }
@@ -1523,7 +1525,7 @@ void rglUniform2ui(GLint location, GLuint v0, GLuint v1)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform2ui.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glUniform2ui(location, v0, v1);
 #endif
 }
@@ -1539,7 +1541,7 @@ void rglUniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform3ui.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glUniform3ui(location, v0, v1, v2);
 #endif
 }
@@ -1555,7 +1557,7 @@ void rglUniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform4ui.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glUniform4ui(location, v0, v1, v2, v3);
 #endif
 }
@@ -1671,9 +1673,11 @@ GLuint rglCreateProgram(void)
    log_cb(RETRO_LOG_INFO, "glCreateProgram.\n");
 #endif
    GLuint temp = glCreateProgram();
+#ifndef __vita__
    int i;
    for (i = 0; i < MAX_UNIFORMS; ++i)
       memset(&program_uniforms[temp][i], 0, sizeof(struct gl_program_uniforms));
+#endif
    return temp;
 }
 
@@ -1789,7 +1793,7 @@ void rglVertexAttribIPointer(
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glVertexAttribIPointer.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glVertexAttribIPointer(index, size, type, stride, pointer);
 #endif
 }
@@ -1970,9 +1974,14 @@ void rglUniform1f(GLint location, GLfloat v0)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform1f.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform1f != v0) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform1f != v0)
+#endif
+   {
       glUniform1f(location, v0);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform1f = v0;
+#endif
    }
 }
 
@@ -1987,9 +1996,14 @@ void rglUniform1fv(GLint location,  GLsizei count,  const GLfloat *value)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform1fv.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform1f != value[0]) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform1f != value[0])
+#endif
+   {
       glUniform1fv(location, count, value);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform1f = value[0];
+#endif
    }
 }
 
@@ -2004,9 +2018,14 @@ void rglUniform1iv(GLint location,  GLsizei count,  const GLint *value)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform1iv.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform1i != value[0]) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform1i != value[0])
+#endif
+   {
       glUniform1iv(location, count, value);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform1i = value[0];
+#endif
    }
 }
 
@@ -2018,7 +2037,7 @@ void rglClearBufferfv( 	GLenum buffer,
    log_cb(RETRO_LOG_INFO, "glClearBufferfv.\n");
 #endif
    bindFBO(GL_FRAMEBUFFER);
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3)
    glClearBufferfv(buffer, drawBuffer, value);
 #endif
 }
@@ -2028,7 +2047,7 @@ void rglTexBuffer(GLenum target, GLenum internalFormat, GLuint buffer)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glTexBuffer.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3_2)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3_2)
    glTexBuffer(target, internalFormat, buffer);
 #endif
 }
@@ -2044,7 +2063,7 @@ const GLubyte* rglGetStringi(GLenum name, GLuint index)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetString.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3) || defined(__vita__)
    return glGetStringi(name, index);
 #else
    return NULL;
@@ -2059,7 +2078,7 @@ void rglClearBufferfi( 	GLenum buffer,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glClearBufferfi.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3)
    glClearBufferfi(buffer, drawBuffer, depth, stencil);
 #endif
 }
@@ -2079,7 +2098,7 @@ void rglRenderbufferStorageMultisample( 	GLenum target,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glRenderbufferStorageMultisample.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES_3)
    glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
 #endif
 }
@@ -2095,9 +2114,14 @@ void rglUniform1i(GLint location, GLint v0)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform1i.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform1i != v0) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform1i != v0)
+#endif
+   {
       glUniform1i(location, v0);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform1i = v0;
+#endif
    }
 }
 
@@ -2112,10 +2136,15 @@ void rglUniform2f(GLint location, GLfloat v0, GLfloat v1)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform2f.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform2f[0] != v0 || program_uniforms[gl_state.program][location].uniform2f[1] != v1) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform2f[0] != v0 || program_uniforms[gl_state.program][location].uniform2f[1] != v1)
+#endif
+   {
       glUniform2f(location, v0, v1);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform2f[0] = v0;
       program_uniforms[gl_state.program][location].uniform2f[1] = v1;
+#endif
    }
 }
 
@@ -2130,10 +2159,15 @@ void rglUniform2i(GLint location, GLint v0, GLint v1)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform2i.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform2i[0] != v0 || program_uniforms[gl_state.program][location].uniform2i[1] != v1) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform2i[0] != v0 || program_uniforms[gl_state.program][location].uniform2i[1] != v1)
+#endif
+   {
       glUniform2i(location, v0, v1);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform2i[0] = v0;
       program_uniforms[gl_state.program][location].uniform2i[1] = v1;
+#endif
    }
 }
 
@@ -2148,10 +2182,15 @@ void rglUniform2fv(GLint location, GLsizei count, const GLfloat *value)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform2fv.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform2f[0] != value[0] || program_uniforms[gl_state.program][location].uniform2f[1] != value[1]) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform2f[0] != value[0] || program_uniforms[gl_state.program][location].uniform2f[1] != value[1])
+#endif
+   {
       glUniform2fv(location, count, value);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform2f[0] = value[0];
       program_uniforms[gl_state.program][location].uniform2f[1] = value[1];
+#endif
    }
 }
 
@@ -2166,11 +2205,16 @@ void rglUniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform3f.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform3f[0] != v0 || program_uniforms[gl_state.program][location].uniform3f[1] != v1 || program_uniforms[gl_state.program][location].uniform3f[2] != v2) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform3f[0] != v0 || program_uniforms[gl_state.program][location].uniform3f[1] != v1 || program_uniforms[gl_state.program][location].uniform3f[2] != v2)
+#endif
+   {
       glUniform3f(location, v0, v1, v2);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform3f[0] = v0;
       program_uniforms[gl_state.program][location].uniform3f[1] = v1;
       program_uniforms[gl_state.program][location].uniform3f[2] = v2;
+#endif
    }
 }
 
@@ -2185,11 +2229,16 @@ void rglUniform3fv(GLint location, GLsizei count, const GLfloat *value)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform3fv.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform3f[0] != value[0] || program_uniforms[gl_state.program][location].uniform3f[1] != value[1] || program_uniforms[gl_state.program][location].uniform3f[2] != value[2]) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform3f[0] != value[0] || program_uniforms[gl_state.program][location].uniform3f[1] != value[1] || program_uniforms[gl_state.program][location].uniform3f[2] != value[2])
+#endif
+   {
       glUniform3fv(location, count, value);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform3f[0] = value[0];
       program_uniforms[gl_state.program][location].uniform3f[1] = value[1];
       program_uniforms[gl_state.program][location].uniform3f[2] = value[2];
+#endif
    }
 }
 
@@ -2204,12 +2253,17 @@ void rglUniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform4i.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform4i[0] != v0 || program_uniforms[gl_state.program][location].uniform4i[1] != v1 || program_uniforms[gl_state.program][location].uniform4i[2] != v2 || program_uniforms[gl_state.program][location].uniform4i[3] != v3) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform4i[0] != v0 || program_uniforms[gl_state.program][location].uniform4i[1] != v1 || program_uniforms[gl_state.program][location].uniform4i[2] != v2 || program_uniforms[gl_state.program][location].uniform4i[3] != v3)
+#endif
+   {
       glUniform4i(location, v0, v1, v2, v3);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform4i[0] = v0;
       program_uniforms[gl_state.program][location].uniform4i[1] = v1;
       program_uniforms[gl_state.program][location].uniform4i[2] = v2;
       program_uniforms[gl_state.program][location].uniform4i[3] = v3;
+#endif
    }
 }
 
@@ -2224,12 +2278,17 @@ void rglUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform4f.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform4f[0] != v0 || program_uniforms[gl_state.program][location].uniform4f[1] != v1 || program_uniforms[gl_state.program][location].uniform4f[2] != v2 || program_uniforms[gl_state.program][location].uniform4f[3] != v3) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform4f[0] != v0 || program_uniforms[gl_state.program][location].uniform4f[1] != v1 || program_uniforms[gl_state.program][location].uniform4f[2] != v2 || program_uniforms[gl_state.program][location].uniform4f[3] != v3)
+#endif
+   {
       glUniform4f(location, v0, v1, v2, v3);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform4f[0] = v0;
       program_uniforms[gl_state.program][location].uniform4f[1] = v1;
       program_uniforms[gl_state.program][location].uniform4f[2] = v2;
       program_uniforms[gl_state.program][location].uniform4f[3] = v3;
+#endif
    }
 }
 
@@ -2244,12 +2303,17 @@ void rglUniform4fv(GLint location, GLsizei count, const GLfloat *value)
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glUniform4fv.\n");
 #endif
-   if (program_uniforms[gl_state.program][location].uniform4f[0] != value[0] || program_uniforms[gl_state.program][location].uniform4f[1] != value[1] || program_uniforms[gl_state.program][location].uniform4f[2] != value[2] || program_uniforms[gl_state.program][location].uniform4f[3] != value[3]) {
+#ifndef __vita__
+   if (program_uniforms[gl_state.program][location].uniform4f[0] != value[0] || program_uniforms[gl_state.program][location].uniform4f[1] != value[1] || program_uniforms[gl_state.program][location].uniform4f[2] != value[2] || program_uniforms[gl_state.program][location].uniform4f[3] != value[3])
+#endif
+   {
       glUniform4fv(location, count, value);
+#ifndef __vita__
       program_uniforms[gl_state.program][location].uniform4f[0] = value[0];
       program_uniforms[gl_state.program][location].uniform4f[1] = value[1];
       program_uniforms[gl_state.program][location].uniform4f[2] = value[2];
       program_uniforms[gl_state.program][location].uniform4f[3] = value[3];
+#endif
    }
 }
 
@@ -2356,7 +2420,7 @@ void *rglMapBufferRange( 	GLenum target,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glMapBufferRange.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    return glMapBufferRange(target, offset, length, access);
 #else
    printf("WARNING! Not implemented.\n");
@@ -2397,7 +2461,7 @@ void rglTexStorage2D(GLenum target, GLsizei levels, GLenum internalFormat,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glTexStorage2D.\n");
 #endif
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES3)
    glTexStorage2D(target, levels, internalFormat, width, height);
 #endif
 }
@@ -2475,7 +2539,7 @@ void rglGetProgramBinary( 	GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glGetProgramBinary.\n");
 #endif
-#if !defined(HAVE_OPENGLES) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES3)
+#if !defined(HAVE_OPENGLES) || defined(HAVE_OPENGLES3) || defined(__vita__)
    glGetProgramBinary(program, bufsize, length, binaryFormat, binary);
 #else
    printf("WARNING! Not implemented.\n");
@@ -2496,7 +2560,7 @@ void rglProgramBinary(GLuint program,
 #ifdef GLSM_DEBUG
    log_cb(RETRO_LOG_INFO, "glProgramBinary.\n");
 #endif
-#if !defined(HAVE_OPENGLES) || defined(HAVE_OPENGLES) && defined(HAVE_OPENGLES_3_1)
+#if !defined(HAVE_OPENGLES) || defined(HAVE_OPENGLES_3_1) || defined(__vita__)
    glProgramBinary(program, binaryFormat, binary, length);
 #else
    printf("WARNING! Not implemented.\n");

@@ -1,4 +1,3 @@
-#ifndef __vita__
 #include "glsym/glsym.h"
 #include <stddef.h>
 #define SYM(x) { "gl" #x, &(gl##x) }
@@ -408,4 +407,3 @@ RGLSYMGLTEXTURESTORAGE3DEXTPROC __rglgen_glTextureStorage3DEXT;
 RGLSYMGLTEXTUREVIEWEXTPROC __rglgen_glTextureViewEXT;
 RGLSYMGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC __rglgen_glFramebufferTextureMultiviewOVR;
 RGLSYMGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC __rglgen_glFramebufferTextureMultisampleMultiviewOVR;
-#endif

@@ -30,7 +30,7 @@ extern "C" cothread_t retro_thread;
 #include <Graphics/OpenGLContext/windows/WindowsWGL.h>
 #endif
 
-#if defined(__LIBRETRO__) && (!defined(NO_GL_WRAP) || defined(__vita__))
+#if defined(__LIBRETRO__) && !defined(NO_GL_WRAP)
 #include <glsm/glsm_state_ctl.h>
 #endif
 

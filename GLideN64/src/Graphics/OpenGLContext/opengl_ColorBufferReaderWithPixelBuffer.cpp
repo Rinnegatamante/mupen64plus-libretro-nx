@@ -35,14 +35,13 @@ void ColorBufferReaderWithPixelBuffer::_initBuffers()
 	// Generate Pixel Buffer Objects
 	glGenBuffers(m_numPBO, m_PBO);
 	m_curIndex = 0;
-#ifndef __vita__
+
 	// Initialize Pixel Buffer Objects
 	for (u32 i = 0; i < m_numPBO; ++i) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[i]));
 		glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_DYNAMIC_READ);
 	}
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
-#endif
 }
 
 const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferParams& _params, u32& _heightOffset,
@@ -50,7 +49,6 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
 {
 	GLenum format = GLenum(_params.colorFormat);
 	GLenum type = GLenum(_params.colorType);
-#ifndef __vita__
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
 	glReadPixels(_params.x0, _params.y0, m_pTexture->width, _params.height, format, type, 0);
 	// If Sync, read pixels from the buffer, copy them to RDRAM.
@@ -59,21 +57,14 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
 		m_curIndex = (m_curIndex + 1) % m_numPBO;
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
 	}
-#endif
 	_heightOffset = 0;
 	_stride = m_pTexture->width;
-#ifndef __vita__
 	return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
 		m_pTexture->width * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
-#else
-	return nullptr;
-#endif
 }
 
 void ColorBufferReaderWithPixelBuffer::cleanUp()
 {
-#ifndef __vita__
 	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
-#endif
 }

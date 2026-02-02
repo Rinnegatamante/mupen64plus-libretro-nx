@@ -15,7 +15,6 @@
 
 using namespace opengl;
 
-#ifndef __vita__
 static
 void APIENTRY on_gl_error(GLenum source,
 						GLenum type,
@@ -27,7 +26,6 @@ void APIENTRY on_gl_error(GLenum source,
 {
 	LOG(LOG_ERROR, "%s", message);
 }
-#endif
 
 void GLInfo::init() {
 	const char * strDriverVersion = reinterpret_cast<const char *>(glGetString(GL_VERSION));
@@ -125,7 +123,7 @@ void GLInfo::init() {
 
 	drawElementsBaseVertex = !isGLESX ||
 		(Utils::isExtensionSupported(*this, "GL_EXT_draw_elements_base_vertex") || numericVersion >= 32);
-#if defined(EGL) && !defined(__vita__)
+#if defined(EGL)
 	if (isGLESX && Utils::isExtensionSupported(*this, "GL_EXT_draw_elements_base_vertex") && numericVersion < 32) {
 		ptrDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC) eglGetProcAddress("glDrawRangeElementsBaseVertexEXT");
 	}
@@ -149,7 +147,7 @@ void GLInfo::init() {
 	}
 
 	bool ext_draw_buffers_indexed = isGLESX && (Utils::isExtensionSupported(*this, "GL_EXT_draw_buffers_indexed") || numericVersion >= 32);
-#if defined(EGL) && !defined(__vita__)
+#if defined(EGL)
 	if (isGLESX && bufferStorage)
 		ptrBufferStorage = (PFNGLBUFFERSTORAGEPROC) eglGetProcAddress("glBufferStorageEXT");
 	if (isGLESX && numericVersion < 32) {
@@ -240,7 +238,7 @@ void GLInfo::init() {
 		coverage = maxVertexAttribs >= 10;
 	}
 
-#if defined(EGL) && !defined(__vita__)
+#if defined(EGL)
 	if (isGLESX)
 	{
 		ptrDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC) eglGetProcAddress("glDebugMessageCallbackKHR");

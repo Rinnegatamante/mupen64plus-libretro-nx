@@ -7,11 +7,6 @@
 using namespace graphics;
 using namespace opengl;
 
-#ifdef __vita__
-#define GL_MAP_PERSISTENT_BIT 0
-#define GL_MAP_COHERENT_BIT 0
-#endif
-
 const u32 BufferedDrawer::m_bufMaxSize = 8 * 1024 * 1024; // 8 MB
 #ifndef GL_DEBUG
 const GLbitfield BufferedDrawer::m_bufAccessBits = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
@@ -67,10 +62,8 @@ void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
 	glGenBuffers(1, &_buffer.handle);
 	m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
 	if (m_glInfo.bufferStorage) {
-#ifndef __vita__
 		glBufferStorage(_buffer.type, _bufSize, nullptr, m_bufAccessBits);
 		_buffer.data = (GLubyte*)glMapBufferRange(_buffer.type, 0, _bufSize, m_bufMapBits);
-#endif
 	} else {
 		glBufferData(_buffer.type, _bufSize, nullptr, GL_DYNAMIC_DRAW);
 	}
