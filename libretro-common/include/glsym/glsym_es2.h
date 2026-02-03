@@ -3,10 +3,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifdef __vita__
-#define GL_APIENTRY
-#define GL_APIENTRYP *
-#endif
 #ifdef GL_APIENTRY
 typedef void (GL_APIENTRY *RGLGENGLDEBUGPROC)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
 typedef void (GL_APIENTRY *RGLGENGLDEBUGPROCKHR)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
@@ -20,7 +16,7 @@ typedef void (GL_APIENTRY *RGLGENGLDEBUGPROCKHR)(GLenum, GLenum, GLuint, GLenum,
 typedef void (APIENTRY *RGLGENGLDEBUGPROCARB)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
 typedef void (APIENTRY *RGLGENGLDEBUGPROC)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
 #endif
-#if !defined(GL_OES_EGL_image) || defined(__vita__)
+#if !defined(GL_OES_EGL_image)
 typedef void *GLeglImageOES;
 #endif
 #if !defined(GL_OES_fixed_point) && !defined(HAVE_OPENGLES2)

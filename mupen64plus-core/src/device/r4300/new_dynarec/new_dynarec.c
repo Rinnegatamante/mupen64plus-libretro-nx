@@ -8710,7 +8710,6 @@ void new_dynarec_init(void)
 #ifdef __vita__
   sceBlock = getVMBlock();
   sceKernelGetMemBlockBase(sceBlock, (void **)&base_addr);
-  sceKernelOpenVMDomain();
 #else
   mprotect ((u_char *)g_dev.r4300.extra_memory, 1<<TARGET_SIZE_2,
             PROT_READ | PROT_WRITE | PROT_EXEC);

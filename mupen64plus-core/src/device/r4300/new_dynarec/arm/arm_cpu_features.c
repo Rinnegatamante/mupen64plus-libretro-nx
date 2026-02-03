@@ -102,6 +102,21 @@ static unsigned short get_arm_cpu_part(void)
 
 void detect_arm_cpu_features(void)
 {
+#ifdef __vita__
+    arm_cpu_features.SWP      = 1;
+    arm_cpu_features.Half     = 1;
+    arm_cpu_features.Thumb    = 1;
+    arm_cpu_features.FastMult = 1;
+    arm_cpu_features.VFP      = 1;
+    arm_cpu_features.EDSP     = 1;
+    arm_cpu_features.ThumbEE  = 1;
+    arm_cpu_features.NEON     = 1;
+    arm_cpu_features.VFPv3    = 1;
+    arm_cpu_features.TLS      = 1;
+    arm_cpu_features.VFPv4    = 1;
+    arm_cpu_features.IDIVa    = 1;
+    arm_cpu_features.IDIVt    = 1;
+#else
     arm_cpu_features.SWP      = check_arm_cpu_feature("swp");
     arm_cpu_features.Half     = check_arm_cpu_feature("half");
     arm_cpu_features.Thumb    = check_arm_cpu_feature("thumb");
@@ -119,6 +134,7 @@ void detect_arm_cpu_features(void)
     // Qualcomm Krait supports IDIVa but it doesn't report it. Check for krait.
     if (get_arm_cpu_implementer() == 0x51 && get_arm_cpu_part() == 0x6F)
         arm_cpu_features.IDIVa = arm_cpu_features.IDIVt = 1;
+#endif
 }
 
 void print_arm_cpu_features(void)

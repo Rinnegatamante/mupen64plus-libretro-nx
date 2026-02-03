@@ -240,13 +240,13 @@ static u_int jump_table_symbols[] = {
 };
 
 #ifdef __vita__
-extern int sceBlock;
+#include <kubridge.h>
 #endif
 
 static void cache_flush(char* start, char* end)
 {
 #ifdef __vita__
-	sceKernelSyncVMDomain(sceBlock, (void*)start, (uintptr_t)end - (uintptr_t)start);
+	kuKernelFlushCaches((void*)start, (uintptr_t)end - (uintptr_t)start);
 #else
     __clear_cache(start, end);
 #endif
@@ -4003,9 +4003,9 @@ static void arch_init(void) {
   jump_table_symbols[8] = (int) cached_interp_DDIV;
   jump_table_symbols[9] = (int) cached_interp_DDIVU;
 
-  #ifdef RAM_OFFSET
+#ifdef RAM_OFFSET
   g_dev.r4300.new_dynarec_hot_state.ram_offset=((int)g_dev.rdram.dram-(int)0x80000000)>>2;
-  #endif
+#endif
 
   // Trampolines for jumps >32M
   int *ptr,*ptr2;
