@@ -81,8 +81,8 @@ void recomp_dbg_block(int addr);
 #endif
 
 /* debug */
-#define ASSEM_DEBUG 1
-#define INV_DEBUG 1
+//#define ASSEM_DEBUG 1
+//#define INV_DEBUG 1
 #define COUNT_NOTCOMPILEDS 0
 
 //#define INTERPRET_LOAD
@@ -100,7 +100,7 @@ void recomp_dbg_block(int addr);
 
 #if ASSEM_DEBUG
 #ifdef __vita__
-	#define assem_debug sceClibPrintf
+    #define assem_debug sceClibPrintf
 #else
     #define assem_debug(...) DebugMessage(M64MSG_VERBOSE, __VA_ARGS__)
 #endif
@@ -111,7 +111,7 @@ void recomp_dbg_block(int addr);
 #endif
 #if INV_DEBUG
 #ifdef __vita__
-	#define inv_debug sceClibPrintf
+    #define inv_debug sceClibPrintf
 #else
     #define inv_debug(...) DebugMessage(M64MSG_VERBOSE, __VA_ARGS__)
 #endif
@@ -2310,10 +2310,6 @@ static void SDR_new(int pcaddr, int count)
 #include "arm64/assem_arm64.c"
 #else
 #error Unsupported dynarec architecture
-#endif
-
-#ifdef __vita__
-int _newlib_vm_size_user = 1 << TARGET_SIZE_2;
 #endif
 
 static void tlb_speed_hacks()
@@ -8716,8 +8712,9 @@ void new_dynarec_init(void)
 #endif
 #elif NEW_DYNAREC == NEW_DYNAREC_ARM
 #ifdef __vita__
-  sceBlock = getVMBlock();
-  sceKernelGetMemBlockBase(sceBlock, (void **)&base_addr);
+  #define ALIGN_DOWN(addr, align) ((uintptr_t)(addr) & ~((uintptr_t)(align) - 1))
+  base_addr = g_dev.r4300.extra_memory;
+  kuKernelMemProtect((void *)ALIGN_DOWN(base_addr, 4096), (1<<TARGET_SIZE_2) + 4096, KU_KERNEL_PROT_EXEC | KU_KERNEL_PROT_WRITE | KU_KERNEL_PROT_READ);
 #else
   mprotect ((u_char *)g_dev.r4300.extra_memory, 1<<TARGET_SIZE_2,
             PROT_READ | PROT_WRITE | PROT_EXEC);
@@ -8763,7 +8760,7 @@ void new_dynarec_init(void)
   // Copy this into local area so we don't have to put it in every literal pool
   g_dev.r4300.new_dynarec_hot_state.invc_ptr=g_dev.r4300.cached_interp.invalid_code;
 #endif
-#ifdef HAVE_LIBNX
+#if defined(HAVE_LIBNX) || defined(__vita__)
   stop_after_jal=0;
 #else
   stop_after_jal=1;
@@ -11934,5 +11931,6 @@ int new_recompile_block(int addr)
     }
     expirep=(expirep+1)&65535;
   }
+  
   return 0;
 }

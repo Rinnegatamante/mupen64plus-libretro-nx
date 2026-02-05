@@ -125,9 +125,7 @@ DEFINE(cached_interp, invalid_code);
 
 #ifdef NEW_DYNAREC
 DEFINE(r4300_core, new_dynarec_hot_state);
-#ifndef __vita__
 DEFINE(r4300_core, extra_memory);
-#endif
 DEFINE(new_dynarec_hot_state, dynarec_local);
 DEFINE(new_dynarec_hot_state, cycle_count);
 DEFINE(new_dynarec_hot_state, pending_exception);
