@@ -33,7 +33,7 @@
 #include <libco.h>
 
 #ifdef __vita__
-#include <vitadk.h>
+#include <vitasdk.h>
 #endif
 
 #ifdef HAVE_LIBNX
