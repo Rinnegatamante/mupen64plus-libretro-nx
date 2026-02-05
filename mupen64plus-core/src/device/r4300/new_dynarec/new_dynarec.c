@@ -27,7 +27,7 @@
 #include <sys/types.h>
 
 #ifdef __vita__
-#include <psp2/kernel/sysmem.h>
+#include <vitasdk.h>
 int sceBlock;
 extern int getVMBlock();
 #endif
@@ -81,8 +81,8 @@ void recomp_dbg_block(int addr);
 #endif
 
 /* debug */
-#define ASSEM_DEBUG 0
-#define INV_DEBUG 0
+#define ASSEM_DEBUG 1
+#define INV_DEBUG 1
 #define COUNT_NOTCOMPILEDS 0
 
 //#define INTERPRET_LOAD
@@ -99,14 +99,22 @@ void recomp_dbg_block(int addr);
 //#define INTERPRET_FCOMP
 
 #if ASSEM_DEBUG
+#ifdef __vita__
+	#define assem_debug sceClibPrintf
+#else
     #define assem_debug(...) DebugMessage(M64MSG_VERBOSE, __VA_ARGS__)
+#endif
 #else
     #define assem_debug(...)
     // Cleanup debug copies
     #define strcpy(...)
 #endif
 #if INV_DEBUG
+#ifdef __vita__
+	#define inv_debug sceClibPrintf
+#else
     #define inv_debug(...) DebugMessage(M64MSG_VERBOSE, __VA_ARGS__)
+#endif
 #else
     #define inv_debug(...)
 #endif
@@ -3636,7 +3644,7 @@ static void delayslot_alloc(struct regstat *current,int i)
     case FJUMP:
     case SYSCALL:
     case SPAN:
-      assem_debug("jump in the delay slot.  this shouldn't happen.");//exit(1);
+      assem_debug("jump in the delay slot.  this shouldn't happen.\n");//exit(1);
       DebugMessage(M64MSG_VERBOSE, "Disabled speculative precompilation");
       stop_after_jal=1;
       ccadj[i-1]+=1;
@@ -4268,7 +4276,7 @@ static void loop_preload(signed char pre[],signed char entry[])
       if(pre[hr]!=entry[hr]) {
         if(entry[hr]>=0) {
           if(get_reg(pre,entry[hr])<0) {
-            assem_debug("loop preload:");
+            assem_debug("loop preload:\n");
             //DebugMessage(M64MSG_VERBOSE, "loop preload: %d",hr);
             if(entry[hr]==0) {
               emit_zeroreg(hr);
@@ -4527,7 +4535,7 @@ static void do_cc(int i,signed char i_regmap[],int *adj,int addr,int taken,int i
 static void do_ccstub(int n)
 {
   literal_pool(256);
-  assem_debug("do_ccstub %x",start+stubs[n][4]*4);
+  assem_debug("do_ccstub %x\n",start+stubs[n][4]*4);
   set_jump_target(stubs[n][1],(intptr_t)out);
   int i=stubs[n][4];
   if(stubs[n][6]==NULLDS) {
@@ -4778,7 +4786,7 @@ static void do_ccstub(int n)
 static void do_cop1stub(int n)
 {
   literal_pool(256);
-  assem_debug("do_cop1stub %x",start+stubs[n][3]*4);
+  assem_debug("do_cop1stub %x\n",start+stubs[n][3]*4);
   set_jump_target(stubs[n][1],(intptr_t)out);
   int i=stubs[n][3];
   struct regstat *i_regs=(struct regstat *)stubs[n][5];
@@ -4800,7 +4808,7 @@ static void do_cop1stub(int n)
 
 static void do_readstub(int n)
 {
-  assem_debug("do_readstub %x",start+stubs[n][3]*4);
+  assem_debug("do_readstub %x\n",start+stubs[n][3]*4);
   literal_pool(256);
   set_jump_target(stubs[n][1],(intptr_t)out);
   int type=stubs[n][0];
@@ -4914,7 +4922,7 @@ static void do_readstub(int n)
 
 static void inline_readstub(int type, int i, u_int addr_const, char addr, struct regstat *i_regs, int target, int adj, u_int reglist)
 {
-  assem_debug("inline_readstub");
+  assem_debug("inline_readstub\n");
   int rth=get_reg(i_regs->regmap,target|64);
   int rt=get_reg(i_regs->regmap,target);
 
@@ -5025,7 +5033,7 @@ static void inline_readstub(int type, int i, u_int addr_const, char addr, struct
 
 static void do_writestub(int n)
 {
-  assem_debug("do_writestub %x",start+stubs[n][3]*4);
+  assem_debug("do_writestub %x\n",start+stubs[n][3]*4);
   literal_pool(256);
   set_jump_target(stubs[n][1],(intptr_t)out);
   int type=stubs[n][0];
@@ -5123,7 +5131,7 @@ static void do_writestub(int n)
 
 static void inline_writestub(int type, int i, u_int addr_const, char addr, struct regstat *i_regs, int target, int adj, u_int reglist)
 {
-  assem_debug("inline_writestub");
+  assem_debug("inline_writestub\n");
   int rth=get_reg(i_regs->regmap,target|64);
   int rt=get_reg(i_regs->regmap,target);
   assert(rt>=0);
@@ -7010,8 +7018,8 @@ static void ds_assemble_entry(int i)
 {
   int t=(ba[i]-start)>>2;
   if(!instr_addr[t]) instr_addr[t]=(uintptr_t)out;
-  assem_debug("Assemble delay slot at %x",ba[i]);
-  assem_debug("<->");
+  assem_debug("Assemble delay slot at %x\n",ba[i]);
+  assem_debug("<->\n");
   if(regs[t].regmap_entry[HOST_CCREG]==CCREG&&regs[t].regmap[HOST_CCREG]!=CCREG)
     wb_register(CCREG,regs[t].regmap_entry,regs[t].wasdirty,regs[t].was32);
   load_regs(regs[t].regmap_entry,regs[t].regmap,regs[t].was32,rs1[t],rs2[t]);
@@ -7069,9 +7077,9 @@ static void ds_assemble_entry(int i)
   store_regs_bt(regs[t].regmap,regs[t].is32,regs[t].dirty,ba[i]+4);
   load_regs_bt(regs[t].regmap,regs[t].is32,regs[t].dirty,ba[i]+4);
   if(internal_branch(regs[t].is32,ba[i]+4))
-    assem_debug("branch: internal");
+    assem_debug("branch: internal\n");
   else
-    assem_debug("branch: external");
+    assem_debug("branch: external\n");
   assert(internal_branch(regs[t].is32,ba[i]+4));
   add_to_linker((intptr_t)out,ba[i]+4,internal_branch(regs[t].is32,ba[i]+4));
   emit_jmp(0);
@@ -7083,7 +7091,7 @@ static void ujump_assemble(int i,struct regstat *i_regs)
   #ifdef REG_PREFETCH
   signed char *i_regmap=i_regs->regmap;
   #endif
-  if(i==(ba[i]-start)>>2) assem_debug("idle loop");
+  if(i==(ba[i]-start)>>2) assem_debug("idle loop\n");
   address_generation(i+1,i_regs,regs[i].regmap_entry);
 
   if((rt1[i]==31)&&(rt1[i+1]==31||rs1[i+1]==31||rs2[i+1]==31))
@@ -7154,9 +7162,9 @@ static void ujump_assemble(int i,struct regstat *i_regs)
     if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
     load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
     if(internal_branch(branch_regs[i].is32,ba[i]))
-      assem_debug("branch: internal");
+      assem_debug("branch: internal\n");
     else
-      assem_debug("branch: external");
+      assem_debug("branch: external\n");
     if(internal_branch(branch_regs[i].is32,ba[i])&&is_ds[(ba[i]-start)>>2]) {
       ds_assemble_entry(i);
     }
@@ -7288,14 +7296,14 @@ static void cjump_assemble(int i,struct regstat *i_regs)
   int cc;
   int match;
   match=match_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
-  assem_debug("match=%d",match);
+  assem_debug("match=%d\n",match);
   int s1h,s1l,s2h,s2l;
   int prev_cop1_usable=cop1_usable;
   int unconditional=0,nop=0;
   int only32=0;
   int invert=0;
   int branch_internal=internal_branch(branch_regs[i].is32,ba[i]);
-  if(i==(ba[i]-start)>>2) assem_debug("idle loop");
+  if(i==(ba[i]-start)>>2) assem_debug("idle loop\n");
   if(!match) invert=1;
   #ifdef CORTEX_A8_BRANCH_PREDICTION_HACK
   if(i>(ba[i]-start)>>2) invert=1;
@@ -7358,16 +7366,16 @@ static void cjump_assemble(int i,struct regstat *i_regs)
     if(unconditional)
       store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
     //do_cc(i,branch_regs[i].regmap,&adj,unconditional?ba[i]:-1,unconditional);
-    //assem_debug("cycle count (adj)");
+    //assem_debug("cycle count (adj)\n");
     if(unconditional) {
       do_cc(i,branch_regs[i].regmap,&adj,ba[i],TAKEN,0);
       if(i!=(ba[i]-start)>>2 || source[i+1]!=0) {
         if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
         load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         if(branch_internal)
-          assem_debug("branch: internal");
+          assem_debug("branch: internal\n");
         else
-          assem_debug("branch: external");
+          assem_debug("branch: external\n");
         if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
           ds_assemble_entry(i);
         }
@@ -7498,9 +7506,9 @@ static void cjump_assemble(int i,struct regstat *i_regs)
           store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
           load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
           if(branch_internal)
-            assem_debug("branch: internal");
+            assem_debug("branch: internal\n");
           else
-            assem_debug("branch: external");
+            assem_debug("branch: external\n");
           if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
             ds_assemble_entry(i);
           }
@@ -7602,7 +7610,7 @@ static void cjump_assemble(int i,struct regstat *i_regs)
     // branch taken
     if(!nop) {
       if(taken) set_jump_target(taken,(intptr_t)out);
-      assem_debug("1:");
+      assem_debug("1:\n");
       wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                     ds_unneeded,ds_unneeded_upper);
       // load regs
@@ -7619,13 +7627,13 @@ static void cjump_assemble(int i,struct regstat *i_regs)
       store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
       do_cc(i,i_regmap,&adj,ba[i],TAKEN,0);
       if(i!=(ba[i]-start)>>2 || source[i+1]!=0) {
-        assem_debug("cycle count (adj)");
+        assem_debug("cycle count (adj)\n");
         if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
         load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         if(branch_internal)
-          assem_debug("branch: internal");
+          assem_debug("branch: internal\n");
         else
-          assem_debug("branch: external");
+          assem_debug("branch: external\n");
         if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
           ds_assemble_entry(i);
         }
@@ -7640,7 +7648,7 @@ static void cjump_assemble(int i,struct regstat *i_regs)
     if(!unconditional) {
       if(nottaken1) set_jump_target(nottaken1,(intptr_t)out);
       set_jump_target(nottaken,(intptr_t)out);
-      assem_debug("2:");
+      assem_debug("2:\n");
       if(!likely[i]) {
         wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                       ds_unneeded,ds_unneeded_upper);
@@ -7677,14 +7685,14 @@ static void sjump_assemble(int i,struct regstat *i_regs)
   int cc;
   int match;
   match=match_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
-  assem_debug("smatch=%d",match);
+  assem_debug("smatch=%d\n",match);
   int s1h,s1l;
   int prev_cop1_usable=cop1_usable;
   int unconditional=0,nevertaken=0;
   int only32=0;
   int invert=0;
   int branch_internal=internal_branch(branch_regs[i].is32,ba[i]);
-  if(i==(ba[i]-start)>>2) assem_debug("idle loop");
+  if(i==(ba[i]-start)>>2) assem_debug("idle loop\n");
   if(!match) invert=1;
   #ifdef CORTEX_A8_BRANCH_PREDICTION_HACK
   if(i>(ba[i]-start)>>2) invert=1;
@@ -7750,16 +7758,16 @@ static void sjump_assemble(int i,struct regstat *i_regs)
     if(unconditional)
       store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
     //do_cc(i,branch_regs[i].regmap,&adj,unconditional?ba[i]:-1,unconditional);
-    assem_debug("cycle count (adj)");
+    assem_debug("cycle count (adj)\n");
     if(unconditional) {
       do_cc(i,branch_regs[i].regmap,&adj,ba[i],TAKEN,0);
       if(i!=(ba[i]-start)>>2 || source[i+1]!=0) {
         if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
         load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         if(branch_internal)
-          assem_debug("branch: internal");
+          assem_debug("branch: internal\n");
         else
-          assem_debug("branch: external");
+          assem_debug("branch: external\n");
         if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
           ds_assemble_entry(i);
         }
@@ -7853,9 +7861,9 @@ static void sjump_assemble(int i,struct regstat *i_regs)
           store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
           load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
           if(branch_internal)
-            assem_debug("branch: internal");
+            assem_debug("branch: internal\n");
           else
-            assem_debug("branch: external");
+            assem_debug("branch: external\n");
           if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
             ds_assemble_entry(i);
           }
@@ -7921,7 +7929,7 @@ static void sjump_assemble(int i,struct regstat *i_regs)
     ds_unneeded_upper|=1;
     // branch taken
     if(!nevertaken) {
-      //assem_debug("1:");
+      //assem_debug("1:\n");
       wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                     ds_unneeded,ds_unneeded_upper);
       // load regs
@@ -7938,13 +7946,13 @@ static void sjump_assemble(int i,struct regstat *i_regs)
       store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
       do_cc(i,i_regmap,&adj,ba[i],TAKEN,0);
       if(i!=(ba[i]-start)>>2 || source[i+1]!=0) {
-        assem_debug("cycle count (adj)");
+        assem_debug("cycle count (adj)\n");
         if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
         load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         if(branch_internal)
-          assem_debug("branch: internal");
+          assem_debug("branch: internal\n");
         else
-          assem_debug("branch: external");
+          assem_debug("branch: external\n");
         if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
           ds_assemble_entry(i);
         }
@@ -7958,7 +7966,7 @@ static void sjump_assemble(int i,struct regstat *i_regs)
     cop1_usable=prev_cop1_usable;
     if(!unconditional) {
       set_jump_target(nottaken,(intptr_t)out);
-      assem_debug("1:");
+      assem_debug("1:\n");
       if(!likely[i]) {
         wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                       ds_unneeded,ds_unneeded_upper);
@@ -7995,12 +8003,12 @@ static void fjump_assemble(int i,struct regstat *i_regs)
   int cc;
   int match;
   match=match_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
-  assem_debug("fmatch=%d",match);
+  assem_debug("fmatch=%d\n",match);
   int fs,cs;
   intptr_t eaddr;
   int invert=0;
   int branch_internal=internal_branch(branch_regs[i].is32,ba[i]);
-  if(i==(ba[i]-start)>>2) assem_debug("idle loop");
+  if(i==(ba[i]-start)>>2) assem_debug("idle loop\n");
   if(!match) invert=1;
   #ifdef CORTEX_A8_BRANCH_PREDICTION_HACK
   if(i>(ba[i]-start)>>2) invert=1;
@@ -8043,7 +8051,7 @@ static void fjump_assemble(int i,struct regstat *i_regs)
     cc=get_reg(branch_regs[i].regmap,CCREG);
     assert(cc==HOST_CCREG);
     do_cc(i,branch_regs[i].regmap,&adj,-1,0,invert);
-    assem_debug("cycle count (adj)");
+    assem_debug("cycle count (adj)\n");
     if(1) {
       intptr_t nottaken=0;
       if(adj&&!invert) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
@@ -8080,9 +8088,9 @@ static void fjump_assemble(int i,struct regstat *i_regs)
         store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
         if(branch_internal)
-          assem_debug("branch: internal");
+          assem_debug("branch: internal\n");
         else
-          assem_debug("branch: external");
+          assem_debug("branch: external\n");
         if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
           ds_assemble_entry(i);
         }
@@ -8128,7 +8136,7 @@ static void fjump_assemble(int i,struct regstat *i_regs)
     ds_unneeded|=1;
     ds_unneeded_upper|=1;
     // branch taken
-    //assem_debug("1:");
+    //assem_debug("1:\n");
     wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                   ds_unneeded,ds_unneeded_upper);
     // load regs
@@ -8145,13 +8153,13 @@ static void fjump_assemble(int i,struct regstat *i_regs)
     store_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
     do_cc(i,i_regmap,&adj,ba[i],TAKEN,0);
     if(i!=(ba[i]-start)>>2 || source[i+1]!=0) {
-      assem_debug("cycle count (adj)");
+      assem_debug("cycle count (adj)\n");
       if(adj) emit_addimm(cc,CLOCK_DIVIDER*(ccadj[i]+2-adj),cc);
       load_regs_bt(branch_regs[i].regmap,branch_regs[i].is32,branch_regs[i].dirty,ba[i]);
       if(branch_internal)
-        assem_debug("branch: internal");
+        assem_debug("branch: internal\n");
       else
-        assem_debug("branch: external");
+        assem_debug("branch: external\n");
       if(branch_internal&&is_ds[(ba[i]-start)>>2]) {
         ds_assemble_entry(i);
       }
@@ -8164,7 +8172,7 @@ static void fjump_assemble(int i,struct regstat *i_regs)
     // branch not taken
     if(1) { // <- FIXME (don't need this)
       set_jump_target(nottaken,(intptr_t)out);
-      assem_debug("1:");
+      assem_debug("1:\n");
       if(!likely[i]) {
         wb_invalidate(regs[i].regmap,branch_regs[i].regmap,regs[i].dirty,regs[i].is32,
                       ds_unneeded,ds_unneeded_upper);
@@ -8536,7 +8544,7 @@ static void pagespan_assemble(int i,struct regstat *i_regs)
 // Assemble the delay slot for the above
 static void pagespan_ds(void)
 {
-  assem_debug("initial delay slot:");
+  assem_debug("initial delay slot:\n");
   u_int vaddr=start+1;
   u_int page=(0x80000000^vaddr)>>12;
   u_int vpage=page;
@@ -8804,7 +8812,7 @@ int new_recompile_block(int addr)
   recomp_dbg_block(addr);
 #endif
 
-  assem_debug("NOTCOMPILED: addr = %x -> %x", (int)addr, (intptr_t)out);
+  assem_debug("NOTCOMPILED: addr = %x -> %x\n", (int)addr, (intptr_t)out);
 #if COUNT_NOTCOMPILEDS
   notcompiledCount++;
   DebugMessage(M64MSG_VERBOSE, "notcompiledCount=%i", notcompiledCount );
@@ -8836,11 +8844,11 @@ int new_recompile_block(int addr)
         //DebugMessage(M64MSG_VERBOSE, "start: %x next: %x",map,g_dev.r4300.new_dynarec_hot_state.memory_map[pagelimit>>12]);
         if((map&~WRITE_PROTECT)==(g_dev.r4300.new_dynarec_hot_state.memory_map[pagelimit>>12]&~WRITE_PROTECT)) pagelimit+=4096;
       }
-      assem_debug("pagelimit=%x",pagelimit);
-      assem_debug("mapping=%x (%x)",g_dev.r4300.new_dynarec_hot_state.memory_map[start>>12],(uintptr_t)(g_dev.r4300.new_dynarec_hot_state.memory_map[start>>12]<<2)+start);
+      assem_debug("pagelimit=%x\n",pagelimit);
+      assem_debug("mapping=%x (%x)\n",g_dev.r4300.new_dynarec_hot_state.memory_map[start>>12],(uintptr_t)(g_dev.r4300.new_dynarec_hot_state.memory_map[start>>12]<<2)+start);
     }
     else {
-      assem_debug("Compile at unmapped memory address: %x ", (int)addr);
+      assem_debug("Compile at unmapped memory address: %x \n", (int)addr);
       //assem_debug("start: %x next: %x",g_dev.r4300.new_dynarec_hot_state.memory_map[start>>12],g_dev.r4300.new_dynarec_hot_state.memory_map[(start+4096)>>12]);
       return 1; // Caller will invoke exception handler
     }
@@ -11545,11 +11553,11 @@ int new_recompile_block(int addr)
   for(i=0;i<slen;i++)
   {
 #if ASSEM_DEBUG
-    disassemble_inst(i);
+    //disassemble_inst(i);
 #endif
     if(ds) {
       ds=0; // Skip delay slot
-      if(bt[i]) assem_debug("OOPS - branch into delay slot");
+      if(bt[i]) assem_debug("OOPS - branch into delay slot\n");
       instr_addr[i]=0;
     } else {
       #ifndef DESTRUCTIVE_WRITEBACK
@@ -11577,7 +11585,7 @@ int new_recompile_block(int addr)
       }
       // branch target entry point
       instr_addr[i]=(uintptr_t)out;
-      assem_debug("<->");
+      assem_debug("<->\n");
       // load regs
       if(regs[i].regmap_entry[HOST_CCREG]==CCREG&&regs[i].regmap[HOST_CCREG]!=CCREG)
         wb_register(CCREG,regs[i].regmap_entry,regs[i].wasdirty,regs[i].was32);
@@ -11745,7 +11753,7 @@ int new_recompile_block(int addr)
   /* Pass 9 - Linker */
   for(i=0;i<linkcount;i++)
   {
-    assem_debug("%8x -> %8x",link_addr[i][0],link_addr[i][1]);
+    assem_debug("%8x -> %8x\n",link_addr[i][0],link_addr[i][1]);
     literal_pool(64);
     if(!link_addr[i][2])
     {
@@ -11798,8 +11806,8 @@ int new_recompile_block(int addr)
         //if(!(is32[i]&(~unneeded_reg_upper[i])&~(1LL<<CCREG)))
         if(!requires_32bit[i])
         {
-          assem_debug("%8x (%d) <- %8x",instr_addr[i],i,start+i*4);
-          assem_debug("jump_in: %x",start+i*4);
+          assem_debug("%8x (%d) <- %8x\n",instr_addr[i],i,start+i*4);
+          assem_debug("jump_in: %x\n",start+i*4);
           struct ll_entry *head=ll_add(jump_dirty+vpage,vaddr,(void *)out,NULL,start,copy,slen*4);
           dirty_entry_count++;
           intptr_t entry_point=do_dirty_stub(i,head);
@@ -11820,10 +11828,10 @@ int new_recompile_block(int addr)
         else
         {
           u_int r=requires_32bit[i]|!!(requires_32bit[i]>>32);
-          assem_debug("%8x (%d) <- %8x",instr_addr[i],i,start+i*4);
-          assem_debug("jump_in: %x (restricted - %x)",start+i*4,r);
+          assem_debug("%8x (%d) <- %8x\n",instr_addr[i],i,start+i*4);
+          assem_debug("jump_in: %x (restricted - %x)\n",start+i*4,r);
           //intptr_t entry_point=(intptr_t)out;
-          ////assem_debug("entry_point: %x",entry_point);
+          ////assem_debug("entry_point: %x\n",entry_point);
           //load_regs_entry(i);
           //if(entry_point==(intptr_t)out)
           //  entry_point=instr_addr[i];

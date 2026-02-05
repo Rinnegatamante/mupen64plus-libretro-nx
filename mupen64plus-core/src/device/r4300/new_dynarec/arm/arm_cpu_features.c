@@ -113,9 +113,9 @@ void detect_arm_cpu_features(void)
     arm_cpu_features.NEON     = 1;
     arm_cpu_features.VFPv3    = 1;
     arm_cpu_features.TLS      = 1;
-    arm_cpu_features.VFPv4    = 1;
-    arm_cpu_features.IDIVa    = 1;
-    arm_cpu_features.IDIVt    = 1;
+    arm_cpu_features.VFPv4    = 0;
+    arm_cpu_features.IDIVa    = 0;
+    arm_cpu_features.IDIVt    = 0;
 #else
     arm_cpu_features.SWP      = check_arm_cpu_feature("swp");
     arm_cpu_features.Half     = check_arm_cpu_feature("half");

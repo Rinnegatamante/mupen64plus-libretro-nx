@@ -32,6 +32,10 @@
 
 #include <libco.h>
 
+#ifdef __vita__
+#include <vitadk.h>
+#endif
+
 #ifdef HAVE_LIBNX
 #include <switch.h>
 #endif
@@ -243,6 +247,9 @@ static void n64DebugCallback(void* aContext, int aLevel, const char* aMessage)
 {
     char buffer[1024];
     snprintf(buffer, 1024, CORE_NAME ": %s\n", aMessage);
+#ifdef __vita__
+    sceClibPrintf("%s", buffer);
+#endif
     if (log_cb)
         log_cb(RETRO_LOG_INFO, buffer);
 }
