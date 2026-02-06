@@ -80,10 +80,10 @@ TARGET_NAME := mupen64plus_next
 CC_AS ?= $(CC)
 NASM  ?= nasm
 
-GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
-ifneq ($(GIT_VERSION)," unknown")
-	COREFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
-endif
+#GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
+#ifneq ($(GIT_VERSION)," unknown")
+#	COREFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+#endif
 
 ifneq ($(CORE_NAME),)
 	COREFLAGS += -DCORE_NAME=\""$(CORE_NAME)"\"
@@ -234,6 +234,7 @@ else ifeq ($(platform), vita)
    WITH_DYNAREC = arm
    STATIC_LINKING = 1
    HAVE_NEON = 1
+   HAVE_GLIDE = 1
    COREFLAGS += -fno-optimize-sibling-calls
    CC = arm-vita-eabi-gcc$(EXE_EXT)
    CXX = arm-vita-eabi-g++$(EXE_EXT)

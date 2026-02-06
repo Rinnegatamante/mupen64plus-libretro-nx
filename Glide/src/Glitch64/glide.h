@@ -5,6 +5,7 @@
 #include <boolean.h>
 
 #ifdef EGL
+#define FROM_GLIDE
 #include <GL/glcorearb.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
